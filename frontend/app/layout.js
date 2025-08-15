@@ -13,6 +13,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+
 export const metadata = {
   title: "UrlShorter - Professional URL Shortener",
   description: "Transform your long URLs into short, shareable links. Fast, secure, and completely free with detailed analytics.",
