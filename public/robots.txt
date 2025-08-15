@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://urlshorter-five.vercel.app
+
+# Sitemaps
+Sitemap: https://urlshorter-five.vercel.app/sitemap.xml

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Allow: /shorten
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: {{NEXT_PUBLIC_FRONTEND_URL}}/sitemap.xml
