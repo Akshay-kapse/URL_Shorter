@@ -115,37 +115,46 @@ const AdminPage = () => {
     }
   };
 
-  const deleteUrl = async (shortCode) => {
-    if (!confirm(`Are you sure you want to delete the short URL "${shortCode}"?`)) {
-      return;
-    }
+ const deleteUrl = async (shortCode) => {
+  if (!confirm(`Are you sure you want to delete the short URL "${shortCode}"?`)) {
+    return;
+  }
 
-    try {
-      const sessionPassword = localStorage.getItem('admin_session') || password;
-      const response = await fetch(`/api/admin/urls/${shortCode}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${sessionPassword}`,
-        },
-      });
+  try {
+    const sessionPassword = localStorage.getItem('admin_session') || password;
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/url/${shortCode}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${sessionPassword}`,
+      },
+    });
 
-      const result = await response.json();
-      if (result.success) {
-        // Update stats and remove URL from list
-        setStats(result.data.stats);
-        setUrls(urls.filter(url => url.short_code !== shortCode));
-        setError('');
+    const result = await response.json();
+    console.log(result);
+    console.log(response.status);
+    console.log(sessionPassword);
+    console.log(response);
+
+    if (response.ok && result.success) {
+      // Update stats and remove URL from list
+      setStats(result.data.stats);
+      setUrls(urls.filter(url => url.short_code !== shortCode));
+      setError('');
+    } else {
+      if (response.status === 401) {
+        logout();
+        console.log(response.status)
       } else {
-        if (response.status === 401) {
-          logout();
-        } else {
-          setError(result.error || 'Failed to delete URL');
-        }
+        setError(result.error || 'Failed to delete URL');
+        console.log(response.status);
       }
-    } catch (error) {
-      setError('Failed to delete URL');
     }
-  };
+  } catch (error) {
+    setError('Failed to delete URL');
+    console.log(error)
+  }
+};
+
 
   const logout = () => {
     localStorage.removeItem('admin_session');

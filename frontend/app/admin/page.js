@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { apiClient } from '@/lib/api';
+import { apiClient } from '@/lib/models/Url';
 
 const AdminPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -105,20 +105,25 @@ const AdminPage = () => {
     try {
       const sessionPassword = localStorage.getItem('admin_session') || password;
       const result = await apiClient.deleteUrl(shortCode, sessionPassword);
+      console.log(result);
       if (result.success) {
         // Update stats and remove URL from list
         setStats(result.data.stats);
         setUrls(urls.filter(url => url.short_code !== shortCode));
         setError('');
+        console.log(response.status);
       } else {
         if (result.error === 'Unauthorized') {
           logout();
+        console.log(response.status);
         } else {
           setError(result.error || 'Failed to delete URL');
+        console.log(response.status);
         }
       }
     } catch (error) {
       setError('Failed to delete URL');
+      console.log(error);
     }
   };
 
@@ -312,7 +317,7 @@ const AdminPage = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button
-                          onClick={() => deleteUrl(url.short_code)}
+                          onClick={() => deleteUrl(url._shortcode)}
                           className="text-red-600 hover:text-red-900 transition-colors"
                         >
                           Delete
