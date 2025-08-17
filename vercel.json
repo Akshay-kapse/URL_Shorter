@@ -1,12 +1,6 @@
 {
   "env": {
-    "NEXT_PUBLIC_BACKEND_URL": "@NEXT_PUBLIC_BACKEND_URL",
-    "NEXT_PUBLIC_FRONTEND_URL": "@NEXT_PUBLIC_FRONTEND_URL"
-  },
-  "build": {
-    "env": {
-      "NEXT_PUBLIC_BACKEND_URL": "@NEXT_PUBLIC_BACKEND_URL",
-      "NEXT_PUBLIC_FRONTEND_URL": "@NEXT_PUBLIC_FRONTEND_URL"
-    }
+    "NEXT_PUBLIC_BACKEND_URL": "https://urlshorter-production.up.railway.app",
+    "NEXT_PUBLIC_FRONTEND_URL": "https://urlshorter-five.vercel.app"
   }
 }
