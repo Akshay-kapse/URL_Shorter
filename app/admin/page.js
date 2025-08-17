@@ -116,13 +116,19 @@ const AdminPage = () => {
   };
 
  const deleteUrl = async (shortCode) => {
+
+  let API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+console.log("Backend URL:", API_URL); // should log your railway URL
+
   if (!confirm(`Are you sure you want to delete the short URL "${shortCode}"?`)) {
     return;
   }
 
+
   try {
     const sessionPassword = localStorage.getItem('admin_session') || password;
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/url/${shortCode}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/urls/${shortCode}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${sessionPassword}`,

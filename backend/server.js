@@ -137,14 +137,37 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // CORS configuration using frontend URL from env
+// app.use(
+//   cors({
+//     origin: process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000',
+//     credentials: true,
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+//   })
+// );
+const allowedOrigins = [
+  process.env.NEXT_PUBLIC_FRONTEND_URL,
+  'http://localhost:3000',
+  'http://192.168.31.150:3000'
+];
+
 app.use(
   cors({
-    origin: process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000',
+    origin: function(origin, callback) {
+      // Allow requests with no origin (like mobile apps, curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
+
 
 // Body parser middleware
 app.use(express.json({ limit: '10mb' }));
