@@ -41,10 +41,10 @@ const nextConfig = {
   },
 
   async rewrites() {
-    return [
+   return [
       {
         source: "/api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/:path*`,
+        destination: "https://urlshorter-production.up.railway.app/api/:path*",
       },
     ];
   },
