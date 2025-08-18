@@ -26,7 +26,7 @@ export async function DELETE(request, { params }) {
 
     // Delete the URL
     const deletedUrl = await Url.findOneAndDelete({ short_code: shortCode });
-    
+  
     if (!deletedUrl) {
       return Response.json({
         success: false,

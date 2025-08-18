@@ -492,6 +492,7 @@ const AdminPage = () => {
   };
 
   const deleteUrl = async (shortCode) => {
+    console.log(`Deleting URL with short code: ${shortCode}`);
     if (!confirm(`Are you sure you want to delete the short URL "${shortCode}"?`)) {
       return;
     }
@@ -504,6 +505,8 @@ const AdminPage = () => {
         },
       });
       const result = await response.json();
+      console.log(result);
+      console.log(response);
       if (response.ok && result.success) {
         setStats(result.data.stats);
         setUrls(urls.filter(url => url.short_code !== shortCode));
@@ -518,6 +521,7 @@ const AdminPage = () => {
     } catch (err) {
       setError('Failed to delete URL');
       console.error(err);
+      console.log(err);
     }
   };
 
