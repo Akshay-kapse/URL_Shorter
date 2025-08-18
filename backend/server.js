@@ -137,19 +137,19 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // CORS configuration using frontend URL from env
-app.use(
-  cors({
-    origin: process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
-// const allowedOrigins = [
-//   process.env.NEXT_PUBLIC_FRONTEND_URL,
-//   'http://localhost:3000',
-//   'http://192.168.31.150:3000'
-// ];
+// app.use(
+//   cors({
+//     origin: process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000',
+//     credentials: true,
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+//   })
+// );
+const allowedOrigins = [
+  process.env.NEXT_PUBLIC_FRONTEND_URL,
+  'http://localhost:3000',
+  'http://192.168.31.150:3000'
+];
 
 app.use(
   cors({
@@ -164,7 +164,7 @@ app.use(
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 
