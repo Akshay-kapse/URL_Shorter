@@ -44,7 +44,7 @@ const nextConfig = {
    return [
       {
         source: "/api/:path*",
-        destination: "urlshorterproduction.up.railway.app/api/:path*",
+        destination: "https://urlshorterproduction.up.railway.app/api/:path*",
       },
     ];
   },
