@@ -125,7 +125,6 @@
 //     return;
 //   }
 
-
 //   try {
 //     const sessionPassword = localStorage.getItem('admin_session') || password;
 //     const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/url/${shortCode}`, {
@@ -161,7 +160,6 @@
 //   }
 // };
 
-
 //   const logout = () => {
 //     localStorage.removeItem('admin_session');
 //     setIsAuthenticated(false);
@@ -185,13 +183,13 @@
 //             <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
 //             <p className="text-gray-600 mt-2">Enter your admin password to access the dashboard</p>
 //           </div>
-          
+
 //           {error && (
 //             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
 //               {error}
 //             </div>
 //           )}
-          
+
 //           <div className="space-y-4">
 //             <input
 //               type="password"
@@ -210,7 +208,7 @@
 //               {authLoading ? 'Authenticating...' : 'Login'}
 //             </button>
 //           </div>
-          
+
 //           <div className="mt-6 text-center">
 //             <Link href="/" className="text-purple-600 hover:text-purple-800">
 //               ← Back to Home
@@ -273,7 +271,7 @@
 //           <div className="px-6 py-4 border-b border-gray-200">
 //             <h2 className="text-xl font-semibold text-gray-900">All Shortened URLs</h2>
 //           </div>
-          
+
 //           {loading ? (
 //             <div className="p-8 text-center">
 //               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
@@ -306,8 +304,8 @@
 //                     <tr key={url._id} className="hover:bg-gray-50">
 //                       <td className="px-6 py-4 whitespace-nowrap">
 //                         <div className="flex items-center space-x-2">
-//                           <Link 
-//                             href={`/${url.short_code}`} 
+//                           <Link
+//                             href={`/${url.short_code}`}
 //                             target="_blank"
 //                             className="text-purple-600 hover:text-purple-800 font-mono text-sm"
 //                           >
@@ -324,9 +322,9 @@
 //                       </td>
 //                       <td className="px-6 py-4">
 //                         <div className="max-w-xs">
-//                           <a 
-//                             href={url.original_url} 
-//                             target="_blank" 
+//                           <a
+//                             href={url.original_url}
+//                             target="_blank"
 //                             rel="noopener noreferrer"
 //                             className="text-blue-600 hover:text-blue-800 truncate block"
 //                             title={url.original_url}
@@ -361,7 +359,7 @@
 //                   ))}
 //                 </tbody>
 //               </table>
-              
+
 //               {urls.length === 0 && (
 //                 <div className="p-8 text-center text-gray-500">
 //                   <p className="text-lg">No URLs found</p>
@@ -379,20 +377,20 @@
 // export default AdminPage;
 
 "use client";
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from "react";
+import Link from "next/link";
 
 const AdminPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const [urls, setUrls] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
   const [stats, setStats] = useState({
     totalUrls: 0,
     totalVisits: 0,
-    recentUrls: 0
+    recentUrls: 0,
   });
 
   // Backend URL from environment
@@ -400,7 +398,7 @@ const AdminPage = () => {
 
   // Check for existing session on component mount
   useEffect(() => {
-    const savedPassword = localStorage.getItem('admin_session');
+    const savedPassword = localStorage.getItem("admin_session");
     if (savedPassword) {
       setPassword(savedPassword);
       verifyAndFetchData(savedPassword);
@@ -411,7 +409,7 @@ const AdminPage = () => {
     try {
       const response = await fetch(`${backendUrl}/api/admin/urls`, {
         headers: {
-          'Authorization': `Bearer ${pwd}`,
+          Authorization: `Bearer ${pwd}`,
         },
       });
       const result = await response.json();
@@ -419,45 +417,45 @@ const AdminPage = () => {
         setIsAuthenticated(true);
         setUrls(result.data.urls);
         setStats(result.data.stats);
-        setError('');
+        setError("");
       } else {
-        localStorage.removeItem('admin_session');
+        localStorage.removeItem("admin_session");
         setIsAuthenticated(false);
-        setError('Session expired. Please login again.');
+        setError("Session expired. Please login again.");
       }
     } catch {
-      localStorage.removeItem('admin_session');
+      localStorage.removeItem("admin_session");
       setIsAuthenticated(false);
-      setError('Failed to verify session');
+      setError("Failed to verify session");
     }
   };
 
   const authenticate = async () => {
     if (!password.trim()) {
-      setError('Please enter a password');
+      setError("Please enter a password");
       return;
     }
     setAuthLoading(true);
-    setError('');
+    setError("");
 
     try {
       const response = await fetch(`${backendUrl}/api/admin/auth`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${password}`,
+          Authorization: `Bearer ${password}`,
         },
       });
       const result = await response.json();
       if (result.success) {
-        localStorage.setItem('admin_session', password);
+        localStorage.setItem("admin_session", password);
         setIsAuthenticated(true);
-        setError('');
+        setError("");
         fetchUrls();
       } else {
-        setError(result.error || 'Invalid password');
+        setError(result.error || "Invalid password");
       }
     } catch {
-      setError('Authentication failed. Please try again.');
+      setError("Authentication failed. Please try again.");
     } finally {
       setAuthLoading(false);
     }
@@ -466,78 +464,85 @@ const AdminPage = () => {
   const fetchUrls = async () => {
     setLoading(true);
     try {
-      const sessionPassword = localStorage.getItem('admin_session') || password;
+      const sessionPassword = localStorage.getItem("admin_session") || password;
       const response = await fetch(`${backendUrl}/api/admin/urls`, {
         headers: {
-          'Authorization': `Bearer ${sessionPassword}`,
+          Authorization: `Bearer ${sessionPassword}`,
         },
       });
       const result = await response.json();
       if (result.success) {
         setUrls(result.data.urls);
         setStats(result.data.stats);
-        setError('');
+        setError("");
       } else {
         if (response.status === 401) {
           logout();
         } else {
-          setError(result.error || 'Failed to fetch URLs');
+          setError(result.error || "Failed to fetch URLs");
         }
       }
     } catch {
-      setError('Failed to fetch URLs');
+      setError("Failed to fetch URLs");
     } finally {
       setLoading(false);
     }
   };
 
   const deleteUrl = async (shortCode) => {
-    console.log(`Deleting URL with short code: ${shortCode}`);
-    if (!confirm(`Are you sure you want to delete the short URL "${shortCode}"?`)) {
+    console.log("Deleting URL:", shortCode);
+    if (
+      !confirm(`Are you sure you want to delete the short URL "${shortCode}"?`)
+    ) {
       return;
     }
     try {
-      const sessionPassword = localStorage.getItem('admin_session') || password;
-      const response = await fetch(`${backendUrl}/api/admin/urls/${shortCode}`, {  // Note: 'urls' plural here to match backend routes
-        method: 'DELETE',
+      const sessionPassword = localStorage.getItem("admin_session") || password;
+      console.log("Sending DELETE request to:", `/api/admin/urls/${shortCode}`);
+      console.log("Session Password:", sessionPassword)
+      const response = await fetch(`/api/admin/urls/${shortCode}`, {
+        method: "DELETE",
         headers: {
-          'Authorization': `Bearer ${sessionPassword}`,
+          Authorization: `Bearer ${sessionPassword}`,
         },
       });
+      console.log("Response status:", response.status);
+
       const result = await response.json();
-      console.log(result);
-      console.log(response);
-      if (response.ok && result.success) {
-        setStats(result.data.stats);
-        setUrls(urls.filter(url => url.short_code !== shortCode));
-        setError('');
+      console.log("Delete result:", result);
+      console.log("result:", result);
+
+      if (result.success) {
+        // setStats(result.data.stats);
+        setUrls(urls.filter((url) => url.short_code !== shortCode));
+        setError("");
       } else {
         if (response.status === 401) {
           logout();
         } else {
-          setError(result.error || 'Failed to delete URL');
+          setError(result.error || "Failed to delete URL");
+          console.log("Delete result.error:", result.error);
         }
       }
-    } catch (err) {
-      setError('Failed to delete URL');
-      console.error(err);
-      console.log(err);
+    } catch (error) {
+      setError("Failed to delete URL");
+      console.log("error is", error);
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('admin_session');
+    localStorage.removeItem("admin_session");
     setIsAuthenticated(false);
-    setPassword('');
+    setPassword("");
     setUrls([]);
     setStats({ totalUrls: 0, totalVisits: 0, recentUrls: 0 });
-    setError('');
+    setError("");
   };
 
   const copyShortUrl = (shortCode) => {
     const shortUrl = `${window.location.origin}/${shortCode}`;
     navigator.clipboard.writeText(shortUrl);
-    alert('Short URL copied to clipboard!');
+    alert("Short URL copied to clipboard!");
   };
 
   if (!isAuthenticated) {
@@ -546,7 +551,9 @@ const AdminPage = () => {
         <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
           <div className="text-center mb-6">
             <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
-            <p className="text-gray-600 mt-2">Enter your admin password to access the dashboard</p>
+            <p className="text-gray-600 mt-2">
+              Enter your admin password to access the dashboard
+            </p>
           </div>
 
           {error && (
@@ -562,7 +569,9 @@ const AdminPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter admin password"
               className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              onKeyPress={(e) => e.key === 'Enter' && !authLoading && authenticate()}
+              onKeyPress={(e) =>
+                e.key === "Enter" && !authLoading && authenticate()
+              }
               disabled={authLoading}
             />
             <button
@@ -570,7 +579,7 @@ const AdminPage = () => {
               disabled={authLoading}
               className="w-full bg-purple-500 hover:bg-purple-600 disabled:bg-purple-300 text-white font-bold py-3 px-4 rounded-md transition-colors"
             >
-              {authLoading ? 'Authenticating...' : 'Login'}
+              {authLoading ? "Authenticating..." : "Login"}
             </button>
           </div>
 
@@ -595,7 +604,7 @@ const AdminPage = () => {
               disabled={loading}
               className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white px-4 py-2 rounded-md transition-colors"
             >
-              {loading ? 'Refreshing...' : 'Refresh'}
+              {loading ? "Refreshing..." : "Refresh"}
             </button>
             <button
               onClick={logout}
@@ -603,7 +612,10 @@ const AdminPage = () => {
             >
               Logout
             </button>
-            <Link href="/" className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md transition-colors">
+            <Link
+              href="/"
+              className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md transition-colors"
+            >
               Back to Home
             </Link>
           </div>
@@ -612,16 +624,28 @@ const AdminPage = () => {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Total URLs</h3>
-            <p className="text-3xl font-bold text-purple-600">{stats.totalUrls}</p>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">
+              Total URLs
+            </h3>
+            <p className="text-3xl font-bold text-purple-600">
+              {stats.totalUrls}
+            </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Visits</h3>
-            <p className="text-3xl font-bold text-green-600">{stats.totalVisits}</p>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">
+              Total Visits
+            </h3>
+            <p className="text-3xl font-bold text-green-600">
+              {stats.totalVisits}
+            </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Recent URLs (24h)</h3>
-            <p className="text-3xl font-bold text-blue-600">{stats.recentUrls}</p>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">
+              Recent URLs (24h)
+            </h3>
+            <p className="text-3xl font-bold text-blue-600">
+              {stats.recentUrls}
+            </p>
           </div>
         </div>
 
@@ -634,7 +658,9 @@ const AdminPage = () => {
         {/* URLs Table */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">All Shortened URLs</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              All Shortened URLs
+            </h2>
           </div>
 
           {loading ? (
@@ -669,8 +695,8 @@ const AdminPage = () => {
                     <tr key={url._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-2">
-                          <Link 
-                            href={`/${url.short_code}`} 
+                          <Link
+                            href={`/${url.short_code}`}
                             target="_blank"
                             className="text-purple-600 hover:text-purple-800 font-mono text-sm"
                           >
@@ -687,9 +713,9 @@ const AdminPage = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="max-w-xs">
-                          <a 
-                            href={url.original_url} 
-                            target="_blank" 
+                          <a
+                            href={url.original_url}
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-600 hover:text-blue-800 truncate block"
                             title={url.original_url}
@@ -704,12 +730,12 @@ const AdminPage = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(url.created_at).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
+                        {new Date(url.created_at).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
                         })}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -724,11 +750,13 @@ const AdminPage = () => {
                   ))}
                 </tbody>
               </table>
-              
+
               {urls.length === 0 && (
                 <div className="p-8 text-center text-gray-500">
                   <p className="text-lg">No URLs found</p>
-                  <p className="text-sm mt-2">Start by creating some short URLs!</p>
+                  <p className="text-sm mt-2">
+                    Start by creating some short URLs!
+                  </p>
                 </div>
               )}
             </div>

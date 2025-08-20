@@ -1,68 +1,76 @@
-import { connectDB } from '@/lib/mongodb';
-import Url from '@/lib/models/Url';
-import { verifyAdminAuth } from '@/lib/utils';
+// // app/api/admin/urls/[shortCode]/route.js
+// import { NextResponse } from "next/server";
+// import { connectDB } from "@/lib/mongodb";
+// import Url from "@/lib/models/Url";
+// import { verifyAdminAuth } from "@/lib/utils";
 
-export async function DELETE(request, { params }) {
+// export async function DELETE(req, { params }) {
+//   console.log("DELETE request received for shortCode:", params.shortCode);
+//   console.log("params:", params);
+
+//   try {
+//     // ✅ Verify auth like in GET
+//     const authHeader = req.headers.get("authorization");
+//     if (!verifyAdminAuth(authHeader)) {
+//       return NextResponse.json(
+//         { success: false, error: "Unauthorized" },
+//         { status: 401 }
+//       );
+//     }
+
+//     const { shortCode } = params;
+//     console.log("shortCode param received:", shortCode);
+
+//     if (!shortCode) {
+//       return NextResponse.json(
+//         { success: false, error: "Short code is required" },
+//         { status: 400 }
+//       );
+//     }
+
+//     await connectDB();
+//     console.log("shortCode param received:", shortCode);
+//     const deletedUrl = await Url.findOneAndDelete({ short_code: shortCode });
+//     console.log("deletedUrl:", deletedUrl);
+
+//     if (!deletedUrl) {
+//       return NextResponse.json(
+//         { success: false, error: "URL not found" },
+//         { status: 404 }
+//       );
+//     }
+
+//     return NextResponse.json({
+//       success: true,
+//       message: "URL deleted successfully",
+//     });
+//   }  catch (error) {
+//   console.error("Error deleting URL:", error);
+//   return NextResponse.json(
+//     { success: false, error: "Internal server error", details: error.message },
+//     { status: 500 }
+//   );
+// }
+// }
+
+import { NextResponse } from "next/server";
+import connectDB from "@/lib/mongodb";
+import Url from "@/lib/models/Url";
+
+export async function DELETE(req, { params }) {
   try {
-    // Verify authentication
-    const authHeader = request.headers.get('authorization');
-    if (!verifyAdminAuth(authHeader)) {
-      return Response.json({
-        success: false,
-        error: 'Unauthorized'
-      }, { status: 401 });
-    }
-
-    const { shortCode } = await params;
-    
-    if (!shortCode) {
-      return Response.json({
-        success: false,
-        error: 'Short code is required'
-      }, { status: 400 });
-    }
-
     await connectDB();
+    const { shortCode } = params;
 
-    // Delete the URL
-    const deletedUrl = await Url.findOneAndDelete({ short_code: shortCode });
-  
-    if (!deletedUrl) {
-      return Response.json({
-        success: false,
-        error: 'URL not found'
-      }, { status: 404 });
+    const deleted = await Url.findOneAndDelete({ short_code: shortCode });
+
+    if (!deleted) {
+      return NextResponse.json({ error: "URL not found" }, { status: 404 });
     }
 
-    // Get updated stats
-    const urls = await Url.find({}).lean();
-    const totalUrls = urls.length;
-    const totalVisits = urls.reduce((sum, url) => sum + (url.visit_count || 0), 0);
-    
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const recentUrls = urls.filter(url => new Date(url.createdAt) > oneDayAgo).length;
-
-    return Response.json({
-      success: true,
-      message: 'URL deleted successfully',
-      data: {
-        deletedUrl: {
-          short_code: deletedUrl.short_code,
-          original_url: deletedUrl.original_url
-        },
-        stats: {
-          totalUrls,
-          totalVisits,
-          recentUrls
-        }
-      }
-    });
-
-  } catch (error) {
-    console.error('Error in DELETE /api/admin/urls/[shortCode]:', error);
-    return Response.json({
-      success: false,
-      error: 'Internal server error'
-    }, { status: 500 });
+    return NextResponse.json({ message: "URL deleted successfully" });
+  } catch (err) {
+    console.error("Delete error:", err);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
