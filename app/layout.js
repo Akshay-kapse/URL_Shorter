@@ -33,16 +33,13 @@ export const metadata = {
     title: "UrlShorter - Professional URL Shortener",
     description: "Transform your long URLs into short, shareable links. Fast, secure, and completely free.",
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-  },
+  // viewport: ... <-- REMOVE THIS LINE COMPLETELY!
 };
 
 export const viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({ children }) {

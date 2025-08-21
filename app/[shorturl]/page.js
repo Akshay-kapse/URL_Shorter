@@ -9,7 +9,6 @@ export default async function RedirectPage({ params }) {
     notFound();
   }
 
-  try {
   // Connect to MongoDB
   await connectDB();
 
@@ -18,7 +17,7 @@ export default async function RedirectPage({ params }) {
     { short_code: shorturl },
     {
       $inc: { visit_count: 1 },
-      $set: { updatedAt: new Date() }
+      $set: { updatedAt: new Date() },
     },
     { new: true }
   );
@@ -36,8 +35,5 @@ export default async function RedirectPage({ params }) {
   // Let Next.js handle redirect
   redirect(urlDoc.original_url);
 
-  } catch (error) {
-    console.error("Redirect error:", error);
-    notFound();
-  }
+  // (No try/catch around redirect!)
 }
