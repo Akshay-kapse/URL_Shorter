@@ -3,7 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import Url from "@/lib/models/Url";
 
 export default async function RedirectPage({ params }) {
-  const { shorturl } = params;
+  const { shorturl } = await params;
 
   if (!shorturl) {
     notFound();

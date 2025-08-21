@@ -404,6 +404,8 @@ const AdminPage = () => {
     }
   }, []);
 
+  let backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
+
   const verifyAndFetchData = async (pwd) => {
     try {
       const response = await fetch("/api/admin/urls", {
