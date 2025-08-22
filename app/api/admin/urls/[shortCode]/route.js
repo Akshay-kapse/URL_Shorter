@@ -151,7 +151,6 @@ export async function DELETE(request, { params }) {
     await connectDB();
 
     const { shortCode } = params; // ✅ must match folder name
-    console.log("Deleted URL:", deletedUrl);
     console.log("shortCode param received:", shortCode)
     if (!shortCode) {
       return NextResponse.json(
