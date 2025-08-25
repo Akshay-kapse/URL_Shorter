@@ -1,18 +1,23 @@
 {
   "info": {
     "_postman_id": "2f5d249a-7600-45b0-91e4-972d09030847",
-    "name": "UrlShorter",
+    "name": "UrlShorter - Live Backend",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "http://localhost:3000/api/generate",
+      "name": "Generate Short URL",
       "request": {
         "method": "POST",
-        "header": [],
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
         "body": {
           "mode": "raw",
-          "raw": "{\n    \"url\": \"https://facebook.com/codewithharry\",\n    \"shorturl\": \"google2\"\n}",
+          "raw": "{\n    \"url\": \"https://example.com\",\n    \"shorturl\": \"google2\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -20,25 +25,24 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/generate",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "3000",
+          "raw": "https://urlshorterproduction.up.railway.app/api/generate",
+          "protocol": "https",
+          "host": ["urlshorterproduction", "up", "railway", "app"],
           "path": ["api", "generate"]
         }
       },
       "response": []
     },
     {
-      "name": "http://localhost:3000",
+      "name": "Get Frontend Home",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "3000"
+          "raw": "https://urlshorterproduction.up.railway.app/",
+          "protocol": "https",
+          "host": ["urlshorterproduction", "up", "railway", "app"],
+          "path": []
         }
       },
       "response": []
