@@ -25,12 +25,10 @@ const AdminPage = () => {
     }
   }, []);
 
-  let backendUrl =
-    process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
 
   const verifyAndFetchData = async (pwd) => {
     try {
-      const response = await fetch("/api/admin/urls", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/urls`, {
         headers: {
           Authorization: `Bearer ${pwd}`,
         },
@@ -64,7 +62,7 @@ const AdminPage = () => {
     setError("");
 
     try {
-      const response = await fetch(`${backendUrl}/api/admin/auth`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/auth`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${password}`,
@@ -91,7 +89,7 @@ const AdminPage = () => {
     setLoading(true);
     try {
       const sessionPassword = localStorage.getItem("admin_session") || password;
-      const response = await fetch(`${backendUrl}/api/admin/urls`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/urls`, {
         headers: {
           authorization: `Bearer ${sessionPassword}`,
         },
@@ -122,7 +120,7 @@ const deleteUrl = async (shortCode) => {
     const sessionPassword = localStorage.getItem("admin_session");
     console.log("Deleting URL with shortCode:", shortCode);
 
-    const res = await fetch(`/api/delete/${shortCode}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/delete/${shortCode}`, {
       method: "DELETE",
       headers: {
         authorization: `Bearer ${sessionPassword}`,
