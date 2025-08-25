@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import axios from "axios";
 
 const AdminPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -24,7 +25,8 @@ const AdminPage = () => {
     }
   }, []);
 
-  let backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
+  let backendUrl =
+    process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
 
   const verifyAndFetchData = async (pwd) => {
     try {
@@ -41,12 +43,12 @@ const AdminPage = () => {
         setStats(result.data.stats);
         setError("");
       } else {
-        localStorage.removeItem('admin_session');
+        localStorage.removeItem("admin_session");
         setIsAuthenticated(false);
         setError("Session expired. Please login again.");
       }
     } catch {
-      localStorage.removeItem('admin_session');
+      localStorage.removeItem("admin_session");
       setIsAuthenticated(false);
       setError("Failed to verify session");
     }
@@ -63,7 +65,7 @@ const AdminPage = () => {
 
     try {
       const response = await fetch(`${backendUrl}/api/admin/auth`, {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Bearer ${password}`,
         },
@@ -71,7 +73,7 @@ const AdminPage = () => {
 
       const result = await response.json();
       if (result.success) {
-        localStorage.setItem('admin_session', password);
+        localStorage.setItem("admin_session", password);
         setIsAuthenticated(true);
         setError("");
         fetchUrls();
@@ -79,7 +81,7 @@ const AdminPage = () => {
         setError(result.error || "Invalid password");
       }
     } catch {
-      setError('Authentication failed. Please try again.');
+      setError("Authentication failed. Please try again.");
     } finally {
       setAuthLoading(false);
     }
@@ -88,10 +90,10 @@ const AdminPage = () => {
   const fetchUrls = async () => {
     setLoading(true);
     try {
-      const sessionPassword = localStorage.getItem('admin_session') || password;
+      const sessionPassword = localStorage.getItem("admin_session") || password;
       const response = await fetch(`${backendUrl}/api/admin/urls`, {
         headers: {
-          Authorization: `Bearer ${sessionPassword}`,
+          authorization: `Bearer ${sessionPassword}`,
         },
       });
 
@@ -109,53 +111,38 @@ const AdminPage = () => {
         }
       }
     } catch {
-      setError('Failed to fetch URLs');
+      setError("Failed to fetch URLs");
     } finally {
       setLoading(false);
     }
   };
 
 const deleteUrl = async (shortCode) => {
-  console.log(`Deleting URL with short code: ${shortCode}`);
-  if (!confirm(`Are you sure you want to delete the short URL "${shortCode}"?`)) {
-    return;
-  }
   try {
-    const sessionPassword = localStorage.getItem('admin_session') || password;
-    const response = await fetch(`/api/admin/urls/${shortCode}`, {
-      method: 'DELETE',
+    const sessionPassword = localStorage.getItem("admin_session");
+    console.log("Deleting URL with shortCode:", shortCode);
+
+    const res = await fetch(`/api/delete/${shortCode}`, {
+      method: "DELETE",
       headers: {
-        'Authorization': `Bearer ${sessionPassword}`,
+        authorization: `Bearer ${sessionPassword}`,
       },
     });
 
-    let result;
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-      result = await response.json();
-    } else {
-      result = { error: await response.text() }; // fallback for plain text
-    }
+    const data = await res.json();
+    console.log("Response JSON:", data);
 
-    console.log("Delete response:", response.status, result);
-
-    if (response.ok && result.success) {
-      setStats(result.data?.stats || {});
-      setUrls(urls.filter(url => url.short_code !== shortCode));
-      setError('');
+    if (data.success) {
+      // 👇 call your fetch function again
+      await fetchUrls();
     } else {
-      if (response.status === 401) {
-        logout();
-      } else {
-        setError(result.error || 'Failed to delete URL');
-      }
+      setError(data.error || "Failed to delete URL");
     }
   } catch (err) {
-    setError('Failed to delete URL');
     console.error(err);
+    setError("Delete failed");
   }
 };
-
 
   const logout = () => {
     localStorage.removeItem("admin_session");
