@@ -1,7 +1,10 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import Link from "next/link";
 
 const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -46,7 +49,7 @@ const Navbar = () => {
           {/* CTA Buttons */}
           <div className="flex items-center space-x-3">
             <Link href="/shorten" className="hidden sm:block">
-              <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300" fdprocessedid="sefhy">
+              <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300">
                 Try Now
               </button>
             </Link>
@@ -62,14 +65,42 @@ const Navbar = () => {
 
             {/* Mobile menu button */}
             <div className="md:hidden">
-              <Link href="/shorten">
-                <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                  Shorten
-                </button>
-              </Link>
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="text-gray-700 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 p-2 rounded-md font-bold text-xl"
+              >
+                {isOpen ? "✕" : "☰"}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile menu */}
+        {isOpen && (
+          <div className="md:hidden flex flex-col mt-2 space-y-2 px-2 pb-4">
+            <Link
+              href="/"
+              className="block text-gray-700 hover:text-blue-600 font-medium px-2 py-1 rounded-md transition-colors duration-200"
+              onClick={() => setIsOpen(false)}
+            >
+              Home
+            </Link>
+            <Link
+              href="/shorten"
+              className="block text-gray-700 hover:text-blue-600 font-medium px-2 py-1 rounded-md transition-colors duration-200"
+              onClick={() => setIsOpen(false)}
+            >
+              Shorten
+            </Link>
+            <Link
+              href="/admin"
+              className="block text-gray-700 hover:text-blue-600 font-medium px-2 py-1 rounded-md transition-colors duration-200"
+              onClick={() => setIsOpen(false)}
+            >
+              Admin
+            </Link>
+          </div>
+        )}
       </div>
     </nav>
   );
