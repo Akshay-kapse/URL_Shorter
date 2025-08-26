@@ -1,6 +1,6 @@
 {
   "env": {
-    "NEXT_PUBLIC_BACKEND_URL": "https://urlshorterproduction.up.railway.app",
+    "NEXT_PUBLIC_BACKEND_URL": "https://shorter-production-3d9b.up.railway.app",
     "NEXT_PUBLIC_FRONTEND_URL": "https://url-shorter-cyan.vercel.app"
   }
 }

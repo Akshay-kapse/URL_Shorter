@@ -44,7 +44,7 @@
 //    return [
 //       {
 //         source: "/api/:path*",
-//         destination: "https://urlshorterproduction.up.railway.app/api/:path*",
+//         destination: "url-shorter-production-3d9b.up.railway.app/api/:path*",
 //       },
 //     ];
 //   },
