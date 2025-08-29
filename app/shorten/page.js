@@ -22,7 +22,7 @@ const Shorten = () => {
     setUrlData(null);
     try {
       const response = await fetch(
-        `/api/shorten`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/shorten`,
         {
           method: "POST",
           headers: {
