@@ -49,7 +49,7 @@ const Navbar = () => {
           {/* CTA Buttons */}
           <div className="flex items-center space-x-3">
             <Link href="/shorten" className="hidden sm:block">
-              <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300">
+              <button className="bg-gradient-to-r hover:from-blue-700 from-blue-600 to-purple-600  hover:to-purple-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300">
                 Try Now
               </button>
             </Link>
@@ -58,7 +58,7 @@ const Navbar = () => {
               target="_blank"
               className="hidden sm:block"
             >
-              <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-2 rounded-lg border border-gray-300 hover:border-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300">
+              <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-2 border border-gray-300 hover:border-gray-400 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300">
                 GitHub
               </button>
             </Link>

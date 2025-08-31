@@ -4,7 +4,6 @@ import { verifyAdminAuth } from '@/lib/utils';
 
 export async function GET(request) {
   try {
-    console.log("Get all URLs")
     const authHeader = request.headers.get('authorization');
     if (!verifyAdminAuth(authHeader)) {
       return Response.json({
