@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 const AnimatedSection = ({ children, delay = 0 }) => {
   const ref = useRef(null);
@@ -21,98 +23,53 @@ const AnimatedSection = ({ children, delay = 0 }) => {
 };
 
 const AdminPage = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
+  const { isAuthenticated, token, user, logout } = useAuth();
+  const router = useRouter();
   const [urls, setUrls] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [authLoading, setAuthLoading] = useState(false);
   const [stats, setStats] = useState({
     totalUrls: 0,
     totalVisits: 0,
     recentUrls: 0,
   });
 
-  // check session on mount
+  // Redirect to login if not authenticated
   useEffect(() => {
-    const savedPassword = localStorage.getItem("admin_session");
-    if (savedPassword) {
-      setPassword(savedPassword);
-      verifyAndFetchData(savedPassword);
+    if (!isAuthenticated) {
+      router.push('/admin/login');
+    } else {
+      fetchUrls();
     }
-  }, []);
-
-  const verifyAndFetchData = async (pwd) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/urls`,
-        { headers: { Authorization: `Bearer ${pwd}` } }
-      );
-      const result = await response.json();
-      if (result.success) {
-        setIsAuthenticated(true);
-        setUrls(result.data.urls);
-        setStats(result.data.stats);
-        setError("");
-      } else {
-        localStorage.removeItem("admin_session");
-        setIsAuthenticated(false);
-        setError("Session expired. Please login again.");
-      }
-    } catch {
-      localStorage.removeItem("admin_session");
-      setIsAuthenticated(false);
-      setError("Failed to verify session");
-    }
-  };
-
-  const authenticate = async () => {
-    if (!password.trim()) {
-      setError("Please enter a password");
-      return;
-    }
-    setAuthLoading(true);
-    setError("");
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/auth`,
-        { method: "POST", headers: { Authorization: `Bearer ${password}` } }
-      );
-      const result = await response.json();
-      if (result.success) {
-        localStorage.setItem("admin_session", password);
-        setIsAuthenticated(true);
-        setError("");
-        fetchUrls();
-      } else {
-        setError(result.error || "Invalid password");
-      }
-    } catch {
-      setError("Authentication failed. Please try again.");
-    } finally {
-      setAuthLoading(false);
-    }
-  };
+  }, [isAuthenticated, router]);
 
   const fetchUrls = async () => {
+    if (!token) return;
+    
     setLoading(true);
+    setError("");
+    
     try {
-      const sessionPassword =
-        localStorage.getItem("admin_session") || password;
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/urls`,
-        { headers: { authorization: `Bearer ${sessionPassword}` } }
-      );
+      const response = await fetch('/api/admin/urls', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
       const result = await response.json();
+      
       if (result.success) {
         setUrls(result.data.urls);
         setStats(result.data.stats);
-        setError("");
       } else {
-        if (response.status === 401) logout();
-        else setError(result.error || "Failed to fetch URLs");
+        if (response.status === 401) {
+          logout();
+        } else {
+          setError(result.error || "Failed to fetch URLs");
+        }
       }
-    } catch {
+    } catch (error) {
+      console.error('Fetch error:', error);
       setError("Failed to fetch URLs");
     } finally {
       setLoading(false);
@@ -123,82 +80,54 @@ const AdminPage = () => {
     if (!confirm(`Are you sure you want to delete the short URL "${shortCode}"?`)) {
       return;
     }
+
     try {
-      const sessionPassword = localStorage.getItem("admin_session");
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/delete/${shortCode}`,
-        { method: "DELETE", headers: { authorization: `Bearer ${sessionPassword}` } }
-      );
-      const data = await res.json();
-      if (data.success) {
-        await fetchUrls();
+      const response = await fetch(`/api/admin/urls/${shortCode}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        await fetchUrls(); // Refresh data
       } else {
-        setError(data.error || "Failed to delete URL");
+        setError(result.error || "Failed to delete URL");
       }
-    } catch (err) {
-      console.error(err);
-      setError("Delete failed");
+    } catch (error) {
+      console.error('Delete error:', error);
+      setError("Failed to delete URL");
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("admin_session");
-    setIsAuthenticated(false);
-    setPassword("");
-    setUrls([]);
-    setStats({ totalUrls: 0, totalVisits: 0, recentUrls: 0 });
-    setError("");
-  };
-
-  const copyShortUrl = (shortCode) => {
+  const copyShortUrl = async (shortCode) => {
     const shortUrl = `${window.location.origin}/${shortCode}`;
-    navigator.clipboard.writeText(shortUrl);
-    alert("Short URL copied to clipboard!");
+    try {
+      await navigator.clipboard.writeText(shortUrl);
+      // Show success feedback
+      const button = event.target;
+      const originalText = button.innerHTML;
+      button.innerHTML = '✓ Copied!';
+      button.className = button.className.replace('text-gray-400', 'text-green-500');
+      setTimeout(() => {
+        button.innerHTML = originalText;
+        button.className = button.className.replace('text-green-500', 'text-gray-400');
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      alert('Failed to copy URL');
+    }
   };
 
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <AnimatedSection>
-          <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
-            <div className="text-center mb-6">
-              <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
-              <p className="text-gray-600 mt-2">
-                Enter your admin password to access the dashboard
-              </p>
-            </div>
-            {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {error}
-              </div>
-            )}
-            <div className="space-y-4">
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter admin password"
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                onKeyPress={(e) =>
-                  e.key === "Enter" && !authLoading && authenticate()
-                }
-                disabled={authLoading}
-              />
-              <button
-                onClick={authenticate}
-                disabled={authLoading}
-                className="w-full bg-purple-500 hover:bg-purple-600 disabled:bg-purple-300 text-white font-bold py-3 px-4 rounded-md transition-colors"
-              >
-                {authLoading ? "Authenticating..." : "Login"}
-              </button>
-            </div>
-            <div className="mt-6 text-center">
-              <Link href="/" className="text-purple-600 hover:text-purple-800">
-                ← Back to Home
-              </Link>
-            </div>
-          </div>
-        </AnimatedSection>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Checking authentication...</p>
+        </div>
       </div>
     );
   }
@@ -208,14 +137,20 @@ const AdminPage = () => {
       <div className="max-w-7xl mx-auto px-4">
         <AnimatedSection>
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+              <p className="text-gray-600 mt-1">Welcome back, {user?.email}</p>
+            </div>
             <div className="flex gap-4">
               <button
                 onClick={fetchUrls}
                 disabled={loading}
-                className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white px-4 py-2 rounded-md transition-colors"
+                className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white px-4 py-2 rounded-md transition-colors flex items-center space-x-2"
               >
-                {loading ? "Refreshing..." : "Refresh"}
+                <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>{loading ? "Refreshing..." : "Refresh"}</span>
               </button>
               <button
                 onClick={logout}
@@ -224,28 +159,53 @@ const AdminPage = () => {
                 Logout
               </button>
               <Link
-                href="/"
+                href="/shorten"
                 className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md transition-colors"
               >
-                Back to Home
+                Create URL
               </Link>
             </div>
           </div>
         </AnimatedSection>
 
+        {/* Error Message */}
+        {error && (
+          <AnimatedSection>
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <span className="text-red-500 mr-2">⚠️</span>
+                  {error}
+                </div>
+                <button
+                  onClick={() => setError("")}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          </AnimatedSection>
+        )}
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {[
-            { label: "Total URLs", value: stats.totalUrls, color: "text-purple-600" },
-            { label: "Total Visits", value: stats.totalVisits, color: "text-green-600" },
-            { label: "Recent URLs (24h)", value: stats.recentUrls, color: "text-blue-600" },
+            { label: "Total URLs", value: stats.totalUrls, color: "text-purple-600", icon: "🔗" },
+            { label: "Total Visits", value: stats.totalVisits, color: "text-green-600", icon: "👁️" },
+            { label: "Recent URLs (24h)", value: stats.recentUrls, color: "text-blue-600", icon: "⚡" },
           ].map((stat, i) => (
             <AnimatedSection key={stat.label} delay={i * 0.2}>
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                  {stat.label}
-                </h3>
-                <p className={`text-3xl font-bold ${stat.color}`}>{stat.value}</p>
+              <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                      {stat.label}
+                    </h3>
+                    <p className={`text-3xl font-bold ${stat.color}`}>{stat.value}</p>
+                  </div>
+                  <div className="text-3xl">{stat.icon}</div>
+                </div>
               </div>
             </AnimatedSection>
           ))}
@@ -256,7 +216,7 @@ const AdminPage = () => {
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-900">
-                All Shortened URLs
+                Your Shortened URLs
               </h2>
             </div>
             {loading ? (
@@ -264,16 +224,30 @@ const AdminPage = () => {
                 <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
                 <p className="mt-2 text-gray-600">Loading URLs...</p>
               </div>
+            ) : urls.length === 0 ? (
+              <div className="p-8 text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">🔗</span>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No URLs yet</h3>
+                <p className="text-gray-600 mb-6">Start by creating your first short URL!</p>
+                <Link
+                  href="/shorten"
+                  className="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-200"
+                >
+                  Create Short URL
+                </Link>
+              </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Short Code
+                        Original URL
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Original URL
+                        Short Code
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Visits
@@ -295,6 +269,19 @@ const AdminPage = () => {
                         transition={{ duration: 0.4, delay: i * 0.05 }}
                         className="hover:bg-gray-50"
                       >
+                        <td className="px-6 py-4">
+                          <div className="max-w-xs">
+                            <a
+                              href={url.original_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 truncate block"
+                              title={url.original_url}
+                            >
+                              {url.original_url}
+                            </a>
+                          </div>
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center space-x-2">
                             <Link
@@ -311,19 +298,6 @@ const AdminPage = () => {
                             >
                               📋
                             </button>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="max-w-xs">
-                            <a
-                              href={url.original_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800 truncate block"
-                              title={url.original_url}
-                            >
-                              {url.original_url}
-                            </a>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -352,14 +326,6 @@ const AdminPage = () => {
                     ))}
                   </tbody>
                 </table>
-                {urls.length === 0 && (
-                  <div className="p-8 text-center text-gray-500">
-                    <p className="text-lg">No URLs found</p>
-                    <p className="text-sm mt-2">
-                      Start by creating some short URLs!
-                    </p>
-                  </div>
-                )}
               </div>
             )}
           </div>

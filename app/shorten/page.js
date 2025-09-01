@@ -3,6 +3,8 @@ import Link from "next/link";
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 // Reusable Animated Section
 function AnimatedSection({ children }) {
@@ -33,6 +35,8 @@ function AnimatedSection({ children }) {
 }
 
 const Shorten = () => {
+  const { token, isAuthenticated } = useAuth();
+  const router = useRouter();
   const [url, setUrl] = useState("");
   const [shortCode, setShortCode] = useState("");
   const [generated, setGenerated] = useState("");
@@ -40,7 +44,19 @@ const Shorten = () => {
   const [error, setError] = useState("");
   const [urlData, setUrlData] = useState(null);
 
+  // Redirect to login if not authenticated
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/admin/login');
+    }
+  }, [isAuthenticated, router]);
+
   const generate = async () => {
+    if (!isAuthenticated || !token) {
+      setError("Please login to create short URLs");
+      return;
+    }
+
     if (!url.trim()) {
       setError("Please enter a URL");
       return;
@@ -51,19 +67,17 @@ const Shorten = () => {
     setGenerated("");
     setUrlData(null);
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/shorten`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            url: url.trim(),
-            shortCode: shortCode.trim() || undefined,
-          }),
-        }
-      );
+      const response = await fetch('/api/shorten', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          url: url.trim(),
+          shortCode: shortCode.trim() || undefined,
+        }),
+      });
 
       const result = await response.json();
 
@@ -110,6 +124,16 @@ const Shorten = () => {
     }
   };
 
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="mx-auto max-w-2xl bg-white my-16 p-8 rounded-lg shadow-lg">
       <AnimatedSection>
@@ -120,6 +144,14 @@ const Shorten = () => {
           <p className="text-gray-600">
             Transform your long URLs into short, shareable links
           </p>
+          <div className="mt-4">
+            <Link 
+              href="/admin"
+              className="text-blue-600 hover:text-blue-800 font-medium"
+            >
+              ← Back to Dashboard
+            </Link>
+          </div>
         </div>
       </AnimatedSection>
 
@@ -245,13 +277,6 @@ const Shorten = () => {
         </AnimatedSection>
       )}
 
-      <AnimatedSection>
-        <div className="mt-8 text-center">
-          <Link href="/" className="text-purple-600 hover:text-purple-800">
-            ← Back to Home
-          </Link>
-        </div>
-      </AnimatedSection>
     </div>
   );
 };

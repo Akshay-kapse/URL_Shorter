@@ -1,9 +1,20 @@
 import { connectDB } from '@/lib/mongodb';
 import Url from '@/lib/models/Url';
 import { generateShortCode, isValidUrl, normalizeUrl } from '@/lib/utils';
+import { requireAuth } from '@/lib/auth';
 
 export async function POST(request) {
   try {
+    // Require authentication for creating URLs
+    const authResult = requireAuth(request);
+    
+    if (authResult.error) {
+      return Response.json({
+        success: false,
+        error: 'Authentication required to create short URLs'
+      }, { status: 401 });
+    }
+
     // Validate environment variables
     if (!process.env.MONGODB_URI) {
       return Response.json({
@@ -69,8 +80,11 @@ export async function POST(request) {
     }
 
     
-    // Check if URL already exists
-    const existingUrl = await Url.findOne({ original_url: normalizedUrl });
+    // Check if URL already exists for this user
+    const existingUrl = await Url.findOne({ 
+      original_url: normalizedUrl,
+      userId: authResult.user.id 
+    });
     if (existingUrl) {
       return Response.json({
         success: true,
@@ -87,6 +101,7 @@ export async function POST(request) {
 
     // Create new URL entry
     const newUrl = new Url({
+      userId: authResult.user.id,
       original_url: normalizedUrl,
       short_code: shortCode
     });
