@@ -1,6 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
-import Navbar from "@/components/Navbar"; 
+import Navbar from "@/components/Navbar";
 import Link from "next/link";
 
 const geistSans = localFont({
@@ -16,24 +16,29 @@ const geistMono = localFont({
 
 export const metadata = {
   title: "UrlShorter - Professional URL Shortener",
-  description: "Transform your long URLs into short, shareable links. Fast, secure, and completely free with detailed analytics.",
-  keywords: "URL shortener, link shortener, short links, bitly alternative, free URL shortener",
+  description:
+    "Transform your long URLs into short, shareable links. Fast, secure, and completely free with detailed analytics.",
+  keywords:
+    "URL shortener, link shortener, short links, bitly alternative, free URL shortener",
   authors: [{ name: "UrlShorter Team" }],
-  metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000"
+  ),
   robots: "index, follow",
   openGraph: {
     title: "UrlShorter - Professional URL Shortener",
-    description: "Transform your long URLs into short, shareable links. Fast, secure, and completely free.",
+    description:
+      "Transform your long URLs into short, shareable links. Fast, secure, and completely free.",
     type: "website",
     locale: "en_US",
-    url: process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000',
+    url: process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000",
   },
   twitter: {
     card: "summary_large_image",
     title: "UrlShorter - Professional URL Shortener",
-    description: "Transform your long URLs into short, shareable links. Fast, secure, and completely free.",
+    description:
+      "Transform your long URLs into short, shareable links. Fast, secure, and completely free.",
   },
-  // viewport: ... <-- REMOVE THIS LINE COMPLETELY!
 };
 
 export const viewport = {

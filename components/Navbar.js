@@ -1,9 +1,25 @@
 "use client";
+
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-const Navbar = () => {
+const HIDDEN_ROUTES_PREFIX = [
+  "/login",
+  "/signup",
+  "/forgot-password",
+  "/reset-password",
+  "/verify-code",
+];
+
+export default function Navbar() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+
+  // Hide Navbar on auth pages
+  if (HIDDEN_ROUTES_PREFIX.some((p) => pathname.startsWith(p))) {
+    return null;
+  }
 
   return (
     <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
@@ -39,27 +55,22 @@ const Navbar = () => {
             </Link>
             <Link
               href="/admin"
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
+              className="text-gray-700 hover:text-blue-600 font-medium relative group"
             >
               Admin
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-200"></span>
             </Link>
           </div>
 
           {/* CTA Buttons */}
           <div className="flex items-center space-x-3">
             <Link href="/shorten" className="hidden sm:block">
-              <button className="bg-gradient-to-r hover:from-blue-700 from-blue-600 to-purple-600  hover:to-purple-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300">
+              <button className="bg-gradient-to-r hover:from-blue-700 from-blue-600 to-purple-600 hover:to-purple-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300">
                 Try Now
               </button>
             </Link>
-            <Link
-              href="https://github.com/Akshay-kapse/URL_Shorter"
-              target="_blank"
-              className="hidden sm:block"
-            >
+            <Link href="/signup" className="hidden sm:block">
               <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-2 border border-gray-300 hover:border-gray-400 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300">
-                GitHub
+                Logout
               </button>
             </Link>
 
@@ -104,6 +115,4 @@ const Navbar = () => {
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+}
