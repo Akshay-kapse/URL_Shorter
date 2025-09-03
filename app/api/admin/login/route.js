@@ -1,51 +1,61 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import User from "@/lib/models/User";
 import { connectDB } from "@/lib/mongodb";
 import { generateToken } from "@/lib/auth";
 
-export async function POST(req) {
+export async function POST(request) {
   try {
     await connectDB();
-    const { email, password } = await req.json();
+    const { email, password } = await request.json();
 
+    // Validate input
     if (!email || !password) {
       return NextResponse.json(
-        { error: "Please fill required fields" },
+        { success: false, error: "Email and password are required" },
         { status: 400 }
       );
     }
 
-    const user = await User.findOne({ email }).select("+password");
+    // Find user and include password for comparison
+    const user = await User.findOne({ email: email.toLowerCase() }).select("+password");
     if (!user) {
       return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 400 }
+        { success: false, error: "Invalid email or password" },
+        { status: 401 }
       );
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
       return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 400 }
+        { success: false, error: "Invalid email or password" },
+        { status: 401 }
       );
     }
 
-    const token = generateToken(user._id);
+    // Generate JWT token
+    const token = generateToken(user._id.toString(), user.email);
 
+    return NextResponse.json({
+      success: true,
+      message: "Login successful",
+      data: {
+        token,
+        user: {
+          id: user._id.toString(),
+          email: user.email,
+          username: user.username
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error("Login Error:", error);
     return NextResponse.json(
-      {
-        message: "Login successful",
-        token: token,
-        user: { id: user._id, username: user.username, email: user.email },
-      },
-      { status: 200 }
+      { success: false, error: "Internal server error" },
+      { status: 500 }
     );
-
-  } catch (err) {
-    console.error("Login Error:", err);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

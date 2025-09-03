@@ -27,7 +27,7 @@ export async function GET(request) {
     return Response.json({
       success: true,
       user: {
-        id: user._id,
+        id: user._id.toString(),
         email: user.email,
         username: user.username
       }
