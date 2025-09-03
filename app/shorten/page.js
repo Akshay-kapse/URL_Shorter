@@ -3,14 +3,12 @@ import Link from "next/link";
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
 
 // Reusable Animated Section
 function AnimatedSection({ children }) {
   const ref = useRef(null);
   const isInView = useInView(ref, {
-    once: false, // re-animates when scrolling back up
+    once: false,
     amount: 0.25,
   });
 
@@ -35,8 +33,6 @@ function AnimatedSection({ children }) {
 }
 
 const Shorten = () => {
-  const { token, isAuthenticated } = useAuth();
-  const router = useRouter();
   const [url, setUrl] = useState("");
   const [shortCode, setShortCode] = useState("");
   const [generated, setGenerated] = useState("");
@@ -44,19 +40,7 @@ const Shorten = () => {
   const [error, setError] = useState("");
   const [urlData, setUrlData] = useState(null);
 
-  // Redirect to login if not authenticated
-  React.useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/admin/login');
-    }
-  }, [isAuthenticated, router]);
-
   const generate = async () => {
-    if (!isAuthenticated || !token) {
-      setError("Please login to create short URLs");
-      return;
-    }
-
     if (!url.trim()) {
       setError("Please enter a URL");
       return;
@@ -66,16 +50,22 @@ const Shorten = () => {
     setError("");
     setGenerated("");
     setUrlData(null);
+
     try {
-      const response = await fetch('/api/shorten', {
+      console.log("Submitting:", {
+        originalUrl: url,
+        shortCode,
+        email: localStorage.getItem("user_email"),
+        userId: localStorage.getItem("user_id"),
+      });
+      const response = await fetch("/api/shorten", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          url: url.trim(),
-          shortCode: shortCode.trim() || undefined,
+          originalUrl: url.trim(),
+          shortCode: shortCode?.trim() || "", // empty string instead of undefined
+          email: localStorage.getItem("user_email"),
+          userId: localStorage.getItem("user_id"), // make sure this is valid
         }),
       });
 
@@ -89,9 +79,9 @@ const Shorten = () => {
       } else {
         setError(result.error || "An error occurred");
       }
-    } catch (error) {
+    } catch (err) {
       setError("Network error. Please try again.");
-      console.error("Error:", error);
+      console.error("Error:", err);
     } finally {
       setLoading(false);
     }
@@ -103,18 +93,6 @@ const Shorten = () => {
       alert("Link copied to clipboard!");
     } catch (err) {
       console.error("Failed to copy: ", err);
-      const textArea = document.createElement("textarea");
-      textArea.value = generated;
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      try {
-        document.execCommand("copy");
-        alert("Link copied to clipboard!");
-      } catch (err) {
-        alert("Failed to copy link");
-      }
-      document.body.removeChild(textArea);
     }
   };
 
@@ -124,16 +102,6 @@ const Shorten = () => {
     }
   };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Checking authentication...</p>
-        </div>
-      </div>
-    );
-  }
   return (
     <div className="mx-auto max-w-2xl bg-white my-16 p-8 rounded-lg shadow-lg">
       <AnimatedSection>
@@ -145,7 +113,7 @@ const Shorten = () => {
             Transform your long URLs into short, shareable links
           </p>
           <div className="mt-4">
-            <Link 
+            <Link
               href="/admin"
               className="text-blue-600 hover:text-blue-800 font-medium"
             >
@@ -276,7 +244,6 @@ const Shorten = () => {
           </div>
         </AnimatedSection>
       )}
-
     </div>
   );
 };

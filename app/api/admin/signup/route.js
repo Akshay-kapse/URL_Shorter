@@ -20,12 +20,12 @@ export async function POST(req) {
 
     // Validate input
     const validation = userSchema.safeParse({ username, email, password });
-    if (!validation.success) {
-      return NextResponse.json(
-        { error: validation.error.errors.map((e) => e.message) },
-        { status: 400 }
-      );
-    }
+if (!validation.success) {
+  return NextResponse.json(
+    { error: validation.error.issues.map((e) => e.message) },
+    { status: 400 }
+  );
+}
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });

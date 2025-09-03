@@ -4,6 +4,23 @@ import { jwtVerify } from "jose";
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function middleware(request) {
+  const { pathname } = request.nextUrl;
+
+  // Protect only /admin routes (not including /admin/login)
+  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
+    const token = request.cookies.get("token")?.value;
+
+    if (!token) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+
+    try {
+      await jwtVerify(token, secret);
+    } catch (err) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+  }
+
   const response = NextResponse.next();
 
   // Security headers
@@ -15,22 +32,6 @@ export async function middleware(request) {
   response.headers.set("X-XSS-Protection", "1; mode=block");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "origin-when-cross-origin");
-
-  // Protect /admin routes
-  if (request.nextUrl.pathname.startsWith("/admin")) {
-    const token = request.cookies.get("token")?.value;
-
-    if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-
-    try {
-      // ✅ Verify token using jose
-      await jwtVerify(token, secret);
-    } catch (err) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-  }
 
   return response;
 }

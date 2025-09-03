@@ -31,7 +31,7 @@ export default function RegisterPage() {
         setUsername("");
         setEmail("");
         setPassword("");
-        router.push("/");
+        router.push("/login");
       } else {
         alert(data.error || "Registration failed. Try again.");
       }

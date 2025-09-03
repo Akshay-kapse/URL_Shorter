@@ -131,42 +131,47 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-const handleLogin = async (e) => {
-  e.preventDefault();
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-  if (!email || !password) {
-    alert("All fields are required");
-    return;
-  }
-
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await res.json();
-
-    if (res.ok && data.token) {
-      // Store only email and token, not password
-     // After successful login
-localStorage.setItem("user_email", email);
-localStorage.setItem("admin_token", data.token);
-
-
-      alert(data.message || "Login successful");
-      setEmail("");
-      setPassword("");
-      router.push("/admin"); // redirect to admin page
-    } else {
-      alert(data.error || "Invalid credentials");
+    if (!email || !password) {
+      alert("All fields are required");
+      return;
     }
-  } catch (err) {
-    console.error("Login error:", err);
-    alert("Something went wrong. Try again.");
-  }
-};
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok && data.token) {
+        const user = { email: data.user.email, id: data.user._id }; // store userId
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("user_email", data.user.email); // optional, already doing
+        localStorage.setItem("user_id", data.user.id); // store userId separately
+        localStorage.setItem("admin_token", data.token);
+        console.log(localStorage.getItem("user_id")); // should print actual MongoDB ObjectId
+
+
+        alert(data.message || "Login successful");
+        setEmail("");
+        setPassword("");
+        router.push("/");
+      } else {
+        alert(data.error || "Invalid credentials");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      alert("Something went wrong. Try again.");
+    }
+  };
 
   return (
     <div className="flex items-center justify-center h-screen bg-[#0C67A0] font-sans">
