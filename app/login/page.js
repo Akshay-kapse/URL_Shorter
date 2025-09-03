@@ -151,14 +151,14 @@ export default function LoginPage() {
 
       const data = await res.json();
 
-      if (res.ok && data.token) {
-        const user = { email: data.user.email, id: data.user._id }; // store userId
-        localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("user_email", data.user.email); // optional, already doing
-        localStorage.setItem("user_id", data.user.id); // store userId separately
-        localStorage.setItem("admin_token", data.token);
-        console.log(localStorage.getItem("user_id")); // should print actual MongoDB ObjectId
+      if (res.ok && data.success) {
+        const user = data.data.user; // <-- access user inside data
+        const token = data.data.token; // <-- access token inside data
 
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("user_email", user.email);
+        localStorage.setItem("user_id", user.id);
+        localStorage.setItem("admin_token", token);
 
         alert(data.message || "Login successful");
         setEmail("");

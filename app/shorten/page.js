@@ -1,10 +1,8 @@
 "use client";
 import Link from "next/link";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
 
 // Reusable Animated Section
 function AnimatedSection({ children }) {
@@ -42,24 +40,9 @@ export default function ShortenPage() {
   const [error, setError] = useState("");
   const [urlData, setUrlData] = useState(null);
 
-  const { isAuthenticated, loading: authLoading, token } = useAuth();
-  const router = useRouter();
-
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      router.push("/admin/login");
-    }
-  }, [authLoading, isAuthenticated, router]);
-
   const generate = async () => {
     if (!originalUrl.trim()) {
       setError("Please enter a URL");
-      return;
-    }
-
-    if (!token) {
-      setError("Please log in to create short URLs");
       return;
     }
 
@@ -67,13 +50,14 @@ export default function ShortenPage() {
     setError("");
     setGenerated("");
     setUrlData(null);
+    const token = localStorage.getItem("admin_token");
 
     try {
       const response = await fetch("/api/shorten", {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`, // ✅ add this
         },
         body: JSON.stringify({
           originalUrl: originalUrl.trim(),
@@ -102,10 +86,10 @@ export default function ShortenPage() {
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(generated);
-      // Show success notification
-      const notification = document.createElement('div');
-      notification.textContent = '✓ Link copied to clipboard!';
-      notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+      const notification = document.createElement("div");
+      notification.textContent = "✓ Link copied to clipboard!";
+      notification.className =
+        "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50";
       document.body.appendChild(notification);
       setTimeout(() => {
         document.body.removeChild(notification);
@@ -121,21 +105,6 @@ export default function ShortenPage() {
       generate();
     }
   };
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return null; // Will redirect in useEffect
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-12">
@@ -212,7 +181,7 @@ export default function ShortenPage() {
                 type="text"
                 value={shortCode}
                 className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-lg transition-colors"
-                placeholder="Custom code (3-20 characters, letters, numbers, hyphens, underscores)"
+                placeholder="Custom code (3-20 characters)"
                 onChange={(e) => setShortCode(e.target.value)}
                 onKeyPress={handleKeyPress}
                 disabled={loading}
@@ -235,8 +204,18 @@ export default function ShortenPage() {
                 </>
               ) : (
                 <>
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                    />
                   </svg>
                   Generate Short URL
                 </>
@@ -289,7 +268,8 @@ export default function ShortenPage() {
                       </code>
                     </p>
                     <p>
-                      <strong className="text-gray-800">Visits:</strong> {urlData.visit_count}
+                      <strong className="text-gray-800">Visits:</strong>{" "}
+                      {urlData.visit_count}
                     </p>
                     <p>
                       <strong className="text-gray-800">Created:</strong>{" "}
