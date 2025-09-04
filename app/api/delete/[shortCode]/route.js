@@ -1,23 +1,33 @@
-import { NextResponse } from "next/server";
-import { connectDB, getUserUrlCollection } from "@/lib/mongodb"; 
+import { connectDB, getUserUrlCollection } from "@/lib/mongodb";
 import { requireAuth } from "@/lib/auth";
+import { withCors, handleOptions } from "@/lib/cors";
+
+// Handle preflight requests
+export async function OPTIONS() {
+  return handleOptions();
+}
 
 export async function DELETE(request, { params }) {
   try {
     const { shortCode } = await params;
 
+    // Authenticate user
     const authResult = requireAuth(request);
     if (authResult.error) {
-      return NextResponse.json(
-        { success: false, error: authResult.error },
-        { status: authResult.status }
+      return withCors(
+        new Response(
+          JSON.stringify({ success: false, error: authResult.error }),
+          {
+            status: authResult.status,
+            headers: { "Content-Type": "application/json" },
+          }
+        )
       );
     }
 
     await connectDB();
 
     const userEmail = authResult.user.email;
-
     const UserUrlModel = getUserUrlCollection(userEmail);
 
     const deletedUrl = await UserUrlModel.findOneAndDelete({
@@ -26,22 +36,43 @@ export async function DELETE(request, { params }) {
     });
 
     if (!deletedUrl) {
-      return NextResponse.json(
-        { success: false, error: "URL not found or not yours" },
-        { status: 404 }
+      return withCors(
+        new Response(
+          JSON.stringify({
+            success: false,
+            error: "URL not found or not yours",
+          }),
+          {
+            status: 404,
+            headers: { "Content-Type": "application/json" },
+          }
+        )
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      message: "URL deleted successfully",
-      deleted: deletedUrl,
-    });
+    return withCors(
+      new Response(
+        JSON.stringify({
+          success: true,
+          message: "URL deleted successfully",
+          deleted: deletedUrl,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }
+      )
+    );
   } catch (err) {
     console.error("Delete Error:", err);
-    return NextResponse.json(
-      { success: false, error: "Internal server error" },
-      { status: 500 }
+    return withCors(
+      new Response(
+        JSON.stringify({ success: false, error: "Internal server error" }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
+      )
     );
   }
 }

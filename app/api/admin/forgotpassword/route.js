@@ -2,6 +2,12 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/lib/models/User";
 import { sendEmail } from "@/lib/sendEmail";
+import { withCors, handleOptions } from "@/lib/cors"; // ✅ import CORS helper
+
+// Handle preflight OPTIONS request
+export async function OPTIONS() {
+  return handleOptions();
+}
 
 export async function POST(req) {
   try {
@@ -9,12 +15,16 @@ export async function POST(req) {
     const { email } = await req.json();
 
     if (!email) {
-      return NextResponse.json({ message: "Email required" }, { status: 400 });
+      return withCors(
+        NextResponse.json({ message: "Email required" }, { status: 400 })
+      );
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
+      return withCors(
+        NextResponse.json({ message: "User not found" }, { status: 404 })
+      );
     }
 
     // Generate code
@@ -29,9 +39,13 @@ export async function POST(req) {
     // Send email
     await sendEmail(email, resetCode);
 
-    return NextResponse.json({ success: true, message: "Code sent successfully" });
+    return withCors(
+      NextResponse.json({ success: true, message: "Code sent successfully" })
+    );
   } catch (error) {
     console.error("Forgot Password Error:", error);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    return withCors(
+      NextResponse.json({ message: "Server error" }, { status: 500 })
+    );
   }
 }

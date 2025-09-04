@@ -116,13 +116,29 @@ export default function AdminDashboard() {
     }
   }, []);
 
+  const recalcStats = (urlsArray) => {
+    const totalUrls = urlsArray.length;
+    const totalVisits = urlsArray.reduce(
+      (sum, url) => sum + (url.visit_count || 0),
+      0
+    );
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const recentUrls = urlsArray.filter(
+      (url) => new Date(url.created_at) > oneDayAgo
+    ).length;
+
+    setStats({ totalUrls, totalVisits, recentUrls });
+  };
+
   const fetchUserUrls = async (email) => {
     if (!email) return;
     setLoading(true);
     setError("");
 
     try {
-      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/urls?email=${encodeURIComponent(email)}`;
+      const url = `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/api/admin/urls?email=${encodeURIComponent(email)}`;
       const token = localStorage.getItem("admin_token"); // get token from login
       const response = await fetch(url, {
         headers: {
@@ -148,66 +164,74 @@ export default function AdminDashboard() {
     }
   };
 
-
   const deleteUrl = async (shortCode) => {
-  toast((t) => (
-    <div className="flex flex-col space-y-3">
-      <p className="text-sm">
-        Are you sure you want to delete the short URL:{" "}
-        <span className="font-semibold text-red-600">{shortCode}</span>?
-      </p>
-      <div className="flex justify-end space-x-2">
-        <button
-          onClick={async () => {
-            toast.dismiss(t.id); // close confirm toast
+    toast(
+      (t) => (
+        <div className="flex flex-col space-y-3">
+          <p className="text-sm">
+            Are you sure you want to delete the short URL:{" "}
+            <span className="font-semibold text-red-600">{shortCode}</span>?
+          </p>
+          <div className="flex justify-end space-x-2">
+            <button
+              onClick={async () => {
+                toast.dismiss(t.id); // close confirm toast
 
-            try {
-              const token = localStorage.getItem("admin_token");
-              const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/delete/${shortCode}`, {
-                method: "DELETE",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-              });
+                try {
+                  const token = localStorage.getItem("admin_token");
+                  const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/delete/${shortCode}`,
+                    {
+                      method: "DELETE",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                      },
+                    }
+                  );
 
-              const result = await response.json();
+                  const result = await response.json();
 
-              if (result.success) {
-                setUrls((prev) =>
-                  prev.filter((url) => url.short_code !== shortCode)
-                );
+                  if (result.success) {
+                    setUrls((prev) => {
+                      const updatedUrls = prev.filter(
+                        (url) => url.short_code !== shortCode
+                      );
+                      recalcStats(updatedUrls); // recalc stats
+                      return updatedUrls;
+                    });
 
-                if (result.stats) {
-                  setStats(result.stats);
+                    if (result.stats) {
+                      setStats(result.stats);
+                    }
+
+                    setError(null);
+                    toast.success("URL deleted successfully ✅");
+                  } else {
+                    toast.error(result.error || "Failed to delete URL ❌");
+                  }
+                } catch (error) {
+                  console.error("Delete error:", error);
+                  toast.error("Failed to delete URL ❌");
                 }
+              }}
+              className="bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600"
+            >
+              Yes, Delete
+            </button>
 
-                setError(null);
-                toast.success("URL deleted successfully ✅");
-              } else {
-                toast.error(result.error || "Failed to delete URL ❌");
-              }
-            } catch (error) {
-              console.error("Delete error:", error);
-              toast.error("Failed to delete URL ❌");
-            }
-          }}
-          className="bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600"
-        >
-          Yes, Delete
-        </button>
-
-        <button
-          onClick={() => toast.dismiss(t.id)}
-          className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-300"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  ), { duration: 5000 });
-};
-
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-300"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ),
+      { duration: 5000 }
+    );
+  };
 
   const copyShortUrl = async (shortUrl) => {
     try {

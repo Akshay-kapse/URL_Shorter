@@ -1,4 +1,9 @@
 import { NextResponse } from "next/server";
+import { withCors, handleOptions } from "@/lib/cors";
+
+export async function OPTIONS() {
+  return handleOptions();
+}
 
 export async function POST() {
   try {
@@ -10,13 +15,17 @@ export async function POST() {
     // Clear JWT cookie
     response.cookies.set("token", "", {
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       expires: new Date(0),
       path: "/",
     });
 
-    return response;
+    return withCors(response);
   } catch (err) {
     console.error("Logout Error:", err);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return withCors(
+      NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
+    );
   }
 }
