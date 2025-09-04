@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 const StatCard = ({ title, value, icon, color }) => (
   <motion.div
@@ -345,12 +346,12 @@ export default function AdminDashboard() {
               <p className="text-gray-600 mb-6">
                 Start by creating your first short URL!
               </p>
-              <a
+              <Link
                 href="/shorten"
                 className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
               >
                 Create Short URL
-              </a>
+              </Link>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -399,7 +400,7 @@ export default function AdminDashboard() {
           transition={{ delay: 0.4 }}
           className="mt-8 text-center"
         >
-          <a
+          <Link
             href="/shorten"
             className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 space-x-2"
           >
@@ -417,7 +418,7 @@ export default function AdminDashboard() {
               />
             </svg>
             <span>Create New Short URL</span>
-          </a>
+          </Link>
         </motion.div>
       </div>
     </div>

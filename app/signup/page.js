@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast"; // ✅ import toast
+import toast from "react-hot-toast";
+import Link from "next/link";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -14,7 +15,7 @@ export default function RegisterPage() {
     e.preventDefault();
 
     if (!username || !email || !password) {
-      toast.error("All fields are required ❌"); // ❌ replaced alert
+      toast.error("All fields are required ❌");
       return;
     }
 
@@ -115,9 +116,9 @@ export default function RegisterPage() {
 
           <p className="mt-4 text-center text-sm">
             Already have an account?{" "}
-            <a href="/login" className="text-blue-500 hover:underline">
+            <Link href="/login" className="text-blue-500 hover:underline">
               Login Now
-            </a>
+            </Link>
           </p>
         </form>
       </div>
