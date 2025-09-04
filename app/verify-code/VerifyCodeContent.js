@@ -50,8 +50,8 @@ export default function VerifyCodeContent() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0C67A0]">
       <div className="w-full max-w-sm p-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-blue-600 mb-4">
-          Url<span className="text-black">Shorten</span>
+        <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">
+          UrlShorter
         </h2>
         <h3 className="text-lg font-semibold text-gray-700 text-center mb-4">
           Verify Code

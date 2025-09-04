@@ -1,8 +1,13 @@
 "use client";
-export const dynamic = "force-dynamic"; // ensures client-side rendering
+export const dynamic = "force-dynamic";
 
+import ClientOnly from "@/components/ClientOnly";
 import VerifyCodeContent from "./VerifyCodeContent";
 
 export default function VerifyCodePage() {
-  return <VerifyCodeContent />;
+  return (
+    <ClientOnly>
+      <VerifyCodeContent />
+    </ClientOnly>
+  );
 }
