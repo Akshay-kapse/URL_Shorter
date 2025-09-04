@@ -3,6 +3,7 @@ import Link from "next/link";
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
+import toast from "react-hot-toast";
 
 // Reusable Animated Section
 function AnimatedSection({ children }) {
@@ -42,7 +43,7 @@ export default function ShortenPage() {
 
   const generate = async () => {
     if (!originalUrl.trim()) {
-      setError("Please enter a URL");
+      toast.error("Please enter a URL ❌"); 
       return;
     }
 
@@ -53,11 +54,11 @@ export default function ShortenPage() {
     const token = localStorage.getItem("admin_token");
 
     try {
-      const response = await fetch("/api/shorten", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/shorten`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ✅ add this
+          Authorization: `Bearer ${token}`, 
         },
         body: JSON.stringify({
           originalUrl: originalUrl.trim(),
@@ -72,31 +73,25 @@ export default function ShortenPage() {
         setUrlData(result.data);
         setOriginalUrl("");
         setShortCode("");
-      } else {
-        setError(result.error || "An error occurred");
+         toast.success("Short URL generated 🎉");
+     } else {
+        toast.error(result.error || "An error occurred ❌");
       }
     } catch (err) {
-      setError("Network error. Please try again.");
       console.error("Error:", err);
+      toast.error("Network error. Please try again ⚠️");
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const copyToClipboard = async () => {
+   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(generated);
-      const notification = document.createElement("div");
-      notification.textContent = "✓ Link copied to clipboard!";
-      notification.className =
-        "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50";
-      document.body.appendChild(notification);
-      setTimeout(() => {
-        document.body.removeChild(notification);
-      }, 2000);
+      toast.success("Link copied to clipboard ✅"); 
     } catch (err) {
       console.error("Failed to copy: ", err);
-      alert("Failed to copy link");
+      toast.error("Failed to copy link ❌");
     }
   };
 

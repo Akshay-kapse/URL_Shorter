@@ -12,16 +12,27 @@ export default function ForgotPassword() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!email.trim()) {
+      toast.error("Email is required ❌");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/forgotpassword`, { email });
-      toast.success(res.data.message || "Reset code sent successfully!");
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/forgotpassword`,
+        { email }
+      );
 
-      // Pass email as query param to verify page
+      toast.success(res.data.message || "Reset code sent successfully 🎉");
+
+      // ✅ Redirect to verify page with email
       router.push(`/verify-code?email=${encodeURIComponent(email)}`);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      console.error("Forgot password error:", error);
+      toast.error(error.response?.data?.message || "Something went wrong ⚠️");
     } finally {
       setLoading(false);
     }

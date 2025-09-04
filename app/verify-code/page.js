@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 export default function VerifyCode() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get("email") || ""; // From query params
+  const email = searchParams.get("email") || "";
 
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,14 +22,19 @@ export default function VerifyCode() {
       return;
     }
 
+    if (!code.trim()) {
+      toast.error("Please enter the verification code.");
+      return;
+    }
+
     try {
       setLoading(true);
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/verify-code`, {
-        email: email.trim(),
-        code: code.trim(),
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/verify-code`,
+        { email: email.trim(), code: code.trim() }
+      );
 
-      if (res.data.message === "Code verified successfully") {
+      if (res.data.success) {
         toast.success("Code verified successfully!");
         router.push(`/reset-password?email=${encodeURIComponent(email)}`);
       } else {
@@ -46,7 +51,7 @@ export default function VerifyCode() {
     <div className="min-h-screen flex items-center justify-center bg-[#0C67A0]">
       <div className="w-full max-w-sm p-8 bg-white rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">
-          BitLinks
+          UrlShorter
         </h2>
         <h3 className="text-lg font-semibold text-gray-700 text-center mb-4">
           Verify Code

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
@@ -18,14 +18,25 @@ export default function ResetPasswordPage() {
 
   const handleReset = async (e) => {
     e.preventDefault();
+
     if (!email) {
-      toast.error("Email is missing. Please restart the process.");
+      toast.error("⚠️ Email is missing. Please restart the process.");
       router.push("/forgot-password");
       return;
     }
 
+    if (!password.trim() || !confirmPassword.trim()) {
+      toast.error("⚠️ Both password fields are required");
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error("⚠️ Password must be at least 6 characters");
+      return;
+    }
+
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+      toast.error("❌ Passwords do not match");
       return;
     }
 
@@ -36,10 +47,11 @@ export default function ResetPasswordPage() {
         { email, newPassword: password }
       );
 
-      toast.success(res.data.message || "Password reset successful!");
+      toast.success(res.data.message || "✅ Password reset successful!");
       router.push("/login");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      console.error("Reset error:", error);
+      toast.error(error.response?.data?.message || "⚠️ Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -106,9 +118,7 @@ export default function ResetPasswordPage() {
 
           {/* Password mismatch */}
           {confirmPassword && password !== confirmPassword && (
-            <p className="text-sm text-red-500 -mt-3">
-              Passwords do not match
-            </p>
+            <p className="text-sm text-red-500 -mt-3">Passwords do not match</p>
           )}
 
           {/* Submit */}

@@ -2,6 +2,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import ToastProvider from "@/components/ToastProvider"; 
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -60,7 +61,9 @@ export default function RootLayout({ children }) {
         <Navbar/>
         <main className="min-h-screen">
           {children}
-        </main>
+        </main>       
+         <ToastProvider />
+
 
         {/* Footer */}
         <footer className="bg-gray-900 text-white py-12">
