@@ -12,6 +12,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.7",
     "@heroicons/react": "^2.2.0",
+    "@sendinblue/client": "^3.3.1",
     "@tailwindcss/postcss": "^4.1.11",
     "autoprefixer": "^10.4.21",
     "axios": "^1.11.0",
@@ -30,6 +31,7 @@
     "react-hot-toast": "^2.6.0",
     "react-toastify": "^11.0.5",
     "resend": "^6.0.2",
+    "sib-api-v3-sdk": "^8.5.0",
     "zod": "^4.1.5"
   },
   "devDependencies": {
