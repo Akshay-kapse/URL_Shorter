@@ -4,7 +4,7 @@ import { z } from "zod";
 import jwt from "jsonwebtoken";
 import User from "@/lib/models/User"; 
 import { connectDB } from "@/lib/mongodb";
-import { withCors, handleOptions } from "@/lib/cors"; // ✅ import CORS helper
+import { withCors, handleOptions } from "@/lib/cors"; 
 
 const userSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -13,7 +13,7 @@ const userSchema = z.object({
 });
 
 export async function OPTIONS() {
-  return handleOptions(); // ✅ handle preflight
+  return handleOptions();
 }
 
 export async function POST(req) {
