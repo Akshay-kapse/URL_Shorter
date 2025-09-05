@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -47,80 +48,89 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-[#0C67A0] font-sans">
-      <div className="bg-white p-6 rounded-lg shadow-md w-80 sm:w-96">
-        <form onSubmit={handleRegister}>
-          <div className="text-center mb-6">
-            <div className="text-2xl font-semibold">
-              Bit<span className="font-bold text-blue-500">Links</span>
-            </div>
-          </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
+        {/* Heading */}
+        <h2 className="text-3xl font-extrabold text-center text-blue-600 mb-2">
+          Url<span className="text-gray-900">Shorten</span>
+        </h2>
+        <h3 className="text-lg font-semibold text-gray-700 text-center mb-6">
+          Create Your Account
+        </h3>
 
-          <h2 className="mb-5 text-xl font-semibold text-center">
-            Registration
-          </h2>
-
+        {/* Form */}
+        <form onSubmit={handleRegister} className="space-y-5">
           {/* Email */}
-          <label className="mb-1 text-sm block">Email</label>
-          <input
-            className="w-full p-2 mb-3 border border-gray-300 rounded"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-          />
-
-          {/* Username */}
-          <label className="mb-1 text-sm block">Username</label>
-          <input
-            className="w-full p-2 mb-3 border border-gray-300 rounded"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Enter your username"
-            required
-          />
-
-          {/* Password with toggle */}
-          <label className="mb-1 text-sm block">Password</label>
-
-          <div className="relative">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
             <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 border mb-3 border-gray-300 rounded" // pr-12 reserves space for the icon
+              type="email"
+              placeholder="Enter your email"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
+          </div>
 
-            {/* Accessible button, vertically centered */}
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-              className="absolute top-5 right-3 transform -translate-y-1/2 text-gray-600 cursor-pointer"
-            >
-              <span className="leading-none">{showPassword ? "🙈" : "👁️"}</span>
-            </button>
+          {/* Username */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Username
+            </label>
+            <input
+              type="text"
+              placeholder="Enter your username"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Password with toggle */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
+            </div>
           </div>
 
           {/* Submit */}
           <button
             type="submit"
-            className="w-full mt-2 p-2 bg-[#033452] text-white rounded hover:bg-[#02223f]"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed transition"
           >
             Register
           </button>
-
-          <p className="mt-4 text-center text-sm">
-            Already have an account?{" "}
-            <Link href="/login" className="text-blue-500 hover:underline">
-              Login Now
-            </Link>
-          </p>
         </form>
+
+        {/* Footer */}
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Already have an account?{" "}
+          <Link href="/login" className="text-blue-600 font-medium hover:underline">
+            Login Now
+          </Link>
+        </p>
       </div>
     </div>
   );

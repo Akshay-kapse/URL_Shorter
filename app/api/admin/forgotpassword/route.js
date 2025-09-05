@@ -13,14 +13,16 @@ export async function POST(req) {
   try {
     await connectDB();
     const { email } = await req.json();
+    const cleanEmail = email?.trim().toLowerCase();
 
-    if (!email) {
+    if (!cleanEmail) {
       return withCors(
         NextResponse.json({ message: "Email required" }, { status: 400 })
       );
     }
 
     const user = await User.findOne({ email });
+
     if (!user) {
       return withCors(
         NextResponse.json({ message: "User not found" }, { status: 404 })
@@ -37,7 +39,9 @@ export async function POST(req) {
     await user.save();
 
     // Send email
+    console.log("Sending email to:", email, "with code:", resetCode);
     await sendEmail(email, resetCode);
+    console.log("Email sent ✅");
 
     return withCors(
       NextResponse.json({ success: true, message: "Code sent successfully" })

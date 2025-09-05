@@ -14,7 +14,7 @@ export default function LoginPage() {
     e.preventDefault();
 
     if (!email || !password) {
-      toast.error("All fields are required"); 
+      toast.error("All fields are required ❌");
       return;
     }
 
@@ -39,35 +39,38 @@ export default function LoginPage() {
         localStorage.setItem("user_id", user.id);
         localStorage.setItem("admin_token", token);
 
-        toast.success(data.message || "Login successful ✅"); 
+        toast.success(data.message || "Login successful 🎉");
         setEmail("");
         setPassword("");
         router.push("/");
       } else {
-        toast.error(data.error || "Invalid credentials ❌"); 
+        toast.error(data.error || "Invalid credentials ❌");
       }
     } catch (err) {
       console.error("Login error:", err);
-      toast.error("Something went wrong. Try again ⚠️"); 
-        }
+      toast.error("Something went wrong ⚠️");
+    }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-[#0C67A0] font-sans">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-80 sm:w-96">
-        <form onSubmit={handleLogin}>
-          <div className="text-center mb-6">
-            <div className="text-2xl font-semibold">
-              Bit<span className="text-blue-500 font-bold">Links</span>
-            </div>
-          </div>
-          <h2 className="mb-5 text-xl font-semibold text-center">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 px-4">
+       <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
+        {/* Logo / Brand */}
+        <h2 className="text-3xl font-extrabold text-center text-blue-600 mb-2">
+          Url<span className="text-gray-900">Shorten</span>
+        </h2>
+        <h3 className="text-lg font-semibold text-gray-700 mb-6 text-center">
+          Login to your account
+        </h3>
 
+        <form onSubmit={handleLogin} className="space-y-5">
           {/* Email */}
-          <div className="mb-4">
-            <label className="text-sm mb-1 block">Email</label>
+          <div>
+            <label className="mb-1 text-sm font-medium block text-gray-700">
+              Email
+            </label>
             <input
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -76,48 +79,54 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Password with toggle */}
-          <label className="text-sm mb-1 block">Password</label>
-          <div className="relative mb-1">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
-              required
-            />
-            <span
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-600 cursor-pointer"
-            >
-              {showPassword ? "🙈" : "👁️"}
-            </span>
+          {/* Password */}
+          <div>
+            <label className="mb-1 text-sm font-medium block text-gray-700">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+                required
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 cursor-pointer text-lg select-none"
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </span>
+            </div>
           </div>
 
           {/* Forgot Password */}
-          <div className="mb-4 text-right">
-            <button
-              type="button"
-              onClick={() => router.push("/forgot-password")}
-              className="text-sm text-blue-500 hover:underline"
+          <div className="text-right">
+            <Link
+              href="/forgot-password"
+              className="text-sm text-blue-600 hover:underline font-medium"
             >
               Forgot Password?
-            </button>
+            </Link>
           </div>
 
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-[#033452] text-white p-2 rounded hover:bg-[#02223f]"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-md"
           >
             Login
           </button>
 
-          {/* Sign Up */}
-          <p className="mt-4 text-center text-sm">
-            New User?{" "}
-            <Link href="/signup" className="text-blue-500 hover:underline">
+          {/* Signup link */}
+          <p className="text-center text-sm text-gray-600">
+            New user?{" "}
+            <Link
+              href="/signup"
+              className="text-blue-600 hover:underline font-medium"
+            >
               Sign Up Now
             </Link>
           </p>

@@ -28,7 +28,6 @@ export default function ForgotPassword() {
 
       toast.success(res.data.message || "Reset code sent successfully 🎉");
 
-      // ✅ Redirect to verify page with email
       router.push(`/verify-code?email=${encodeURIComponent(email)}`);
     } catch (error) {
       console.error("Forgot password error:", error);
@@ -39,31 +38,53 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0C67A0] flex justify-center items-center">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-center text-blue-600 mb-4">
-          Url<span className="text-black">Shorten</span>
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 flex justify-center items-center px-4">
+      <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8">
+        {/* Logo/Heading */}
+        <h2 className="text-3xl font-extrabold text-center text-blue-600 mb-2">
+          Url<span className="text-gray-900">Shorten</span>
         </h2>
-        <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">
-          Forgot Password
-        </h3>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            className="w-full p-3 border rounded-md mb-4"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+        <p className="text-center text-gray-500 mb-6">
+          Enter your email to reset your password
+        </p>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email Address
+            </label>
+            <input
+              type="email"
+              placeholder="you@example.com"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md font-medium hover:bg-blue-700"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed transition"
             disabled={loading}
           >
             {loading ? "Sending..." : "Send Reset Code"}
           </button>
         </form>
+
+        {/* Footer */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-500">
+            Remember your password?{" "}
+            <a
+              href="/login"
+              className="text-blue-600 font-medium hover:underline"
+            >
+              Back to Login
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );

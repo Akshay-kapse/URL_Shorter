@@ -120,7 +120,7 @@ export default function ShortenPage() {
                 href="/admin"
                 className="text-blue-600 hover:text-blue-800 font-medium"
               >
-                ← Back to Dashboard
+                ← Back to Admin 
               </Link>
               <Link
                 href="/"

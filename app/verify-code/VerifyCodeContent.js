@@ -48,35 +48,58 @@ export default function VerifyCodeContent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0C67A0]">
-      <div className="w-full max-w-sm p-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">
-          UrlShorter
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
+        {/* Logo/Heading */}
+        <h2 className="text-3xl font-extrabold text-center text-blue-600 mb-2">
+          Url<span className="text-gray-900">Shorten</span>
         </h2>
-        <h3 className="text-lg font-semibold text-gray-700 text-center mb-4">
+
+        <h3 className="text-lg font-semibold text-gray-700 text-center mb-2">
           Verify Code
         </h3>
-        <p className="text-sm text-gray-500 text-center mb-6">
-          A verification code has been sent to your email:
+        <p className="text-sm text-gray-500 text-center mb-4">
+          A verification code has been sent to:
         </p>
-        <p className="text-center font-semibold text-gray-700 mb-6">{email}</p>
-        <form onSubmit={handleVerify}>
-          <input
-            type="text"
-            placeholder="Enter your code"
-            className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            required
-          />
+        <p className="text-center font-medium text-blue-600 mb-6">{email}</p>
+
+        {/* Form */}
+        <form onSubmit={handleVerify} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Verification Code
+            </label>
+            <input
+              type="text"
+              placeholder="Enter 6-digit code"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              required
+            />
+          </div>
+
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md font-medium hover:bg-blue-700"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed transition"
             disabled={loading}
           >
             {loading ? "Verifying..." : "Verify Code"}
           </button>
         </form>
+
+        {/* Footer */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-500">
+            Didn’t get the code?{" "}
+            <a
+              href="/forgot-password"
+              className="text-blue-600 font-medium hover:underline"
+            >
+              Resend
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
