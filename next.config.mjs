@@ -49,6 +49,11 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+
+  // ✅ Disable lightningcss, fallback to PostCSS
+  experimental: {
+    optimizeCss: false,
+  },
 };
 
 export default nextConfig;
