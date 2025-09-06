@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/lib/models/User";
 import { withCors, handleOptions } from "@/lib/cors";
-import { sendEmail } from "@/lib/sendEmail"; // ✅ use your helper
+import { sendEmail } from "@/lib/sendEmail";
 
 // Handle preflight OPTIONS request
 export async function OPTIONS() {
