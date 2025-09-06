@@ -45,8 +45,8 @@ const nextConfig = {
   },
 
   experimental: {
-    optimizeCss: false, // ✅ disables lightningcss
-    fontLoaders: [],    // ✅ disables next/font binary loading
+    optimizeCss: false, // disables lightningcss
+    fontLoaders: [],    // disables next/font binary loading
   },
 
   eslint: {
@@ -54,5 +54,5 @@ const nextConfig = {
   },
 };
 
-// ✅ Use CommonJS export for Next.js
+// ✅ CommonJS export required for Next.js builds
 module.exports = nextConfig;
