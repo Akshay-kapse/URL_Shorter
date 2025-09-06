@@ -40,20 +40,19 @@ const nextConfig = {
     ];
   },
 
-  // No rewrites needed since API routes are inside Next.js itself
   async rewrites() {
     return [];
   },
 
-  // ⬇️ Add this block to ignore ESLint errors during build
+  experimental: {
+    optimizeCss: false, // ✅ disables lightningcss
+    fontLoaders: [],    // ✅ disables next/font binary loading
+  },
+
   eslint: {
     ignoreDuringBuilds: true,
   },
-
-  // ✅ Disable lightningcss, fallback to PostCSS
-  experimental: {
-    optimizeCss: false,
-  },
 };
 
-export default nextConfig;
+// ✅ Use CommonJS export for Next.js
+module.exports = nextConfig;
