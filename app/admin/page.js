@@ -97,8 +97,18 @@ const URLRow = ({ url, index, onDelete, onCopy }) => (
         whileTap={{ scale: 0.95 }}
         className="text-red-600 hover:text-red-800 font-medium transition-all duration-200 hover:bg-red-50 px-3 py-2 rounded-lg flex items-center space-x-1 group-hover:shadow-md"
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+          />
         </svg>
         <span className="hidden sm:inline">Delete</span>
       </motion.button>
@@ -184,15 +194,27 @@ export default function AdminDashboard() {
       (t) => (
         <div className="flex flex-col space-y-3 p-2">
           <div className="flex items-center space-x-2">
-            <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            <svg
+              className="w-5 h-5 text-red-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
             </svg>
-            <p className="text-sm font-medium">
-              Confirm Deletion
-            </p>
+            <p className="text-sm font-medium">Confirm Deletion</p>
           </div>
           <p className="text-sm text-gray-600">
-            Delete short URL: <code className="bg-gray-100 px-1 rounded text-red-600 font-mono">{shortCode}</code>?
+            Delete short URL:{" "}
+            <code className="bg-gray-100 px-1 rounded text-red-600 font-mono">
+              {shortCode}
+            </code>
+            ?
           </p>
           <div className="flex justify-end space-x-2">
             <motion.button
@@ -255,15 +277,16 @@ export default function AdminDashboard() {
           </div>
         </div>
       ),
-      { 
+      {
         duration: 8000,
         style: {
-          background: 'white',
-          color: '#374151',
-          border: '1px solid #e5e7eb',
-          borderRadius: '12px',
-          boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-        }
+          background: "white",
+          color: "#374151",
+          border: "1px solid #e5e7eb",
+          borderRadius: "12px",
+          boxShadow:
+            "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+        },
       }
     );
   };
@@ -293,13 +316,16 @@ export default function AdminDashboard() {
                 <span className="text-white font-bold text-lg">🔗</span>
               </div>
               <div>
-                <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Dashboard</h1>
+                <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
+                  Dashboard
+                </h1>
                 <p className="text-sm text-gray-600 hidden sm:block">
                   Welcome back, {userEmail || "User"}
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
+              {/* Refresh Button */}
               <motion.button
                 onClick={handleRefresh}
                 disabled={loading || refreshing}
@@ -308,7 +334,9 @@ export default function AdminDashboard() {
                 className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl"
               >
                 <svg
-                  className={`w-4 h-4 ${(loading || refreshing) ? "animate-spin" : ""}`}
+                  className={`w-5 h-5 ${
+                    loading || refreshing ? "animate-spin" : ""
+                  }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -320,17 +348,67 @@ export default function AdminDashboard() {
                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                   />
                 </svg>
-                <span className="hidden sm:inline">{(loading || refreshing) ? "Refreshing..." : "Refresh"}</span>
+                <span className="hidden sm:inline">
+                  {loading || refreshing ? "Refreshing..." : "Refresh"}
+                </span>
               </motion.button>
-              
+
+              {/* New URL Button */}
               <Link
                 href="/shorten"
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl"
+                className="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
                 </svg>
                 <span className="hidden sm:inline">New URL</span>
+              </Link>
+
+              {/* Home Button */}
+              <Link
+                href="/"
+                className="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path d="M19 21H5C4.4477 21 4 20.5523 4 20V11L1 11L12 1L23 11H20V20C20 20.5523 19.5523 21 19 21ZM6 19H18V9.15745L12 3.7029L6 9.15745V19Z" />
+                </svg>
+                <span className="hidden sm:inline">Home</span>
+              </Link>
+
+              {/* Logout Button */}
+              <Link
+                href="/signup"
+                className="bg-gradient-to-r from-red-600 to-blue-600 hover:from-blue-800 hover:to-red-800 text-white px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl"
+              >
+                <svg
+                  className="w-5 h-5 sm:hidden" // show icon only on xs screens
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1"
+                  />
+                </svg>
+                <span className="hidden sm:inline">Logout</span>
               </Link>
             </div>
           </div>
@@ -396,9 +474,7 @@ export default function AdminDashboard() {
             <div className="flex justify-between items-center">
               <h2 className="text-lg lg:text-xl font-semibold text-gray-900 flex items-center space-x-2">
                 <span>📊</span>
-                <span>
-                  Your URLs
-                </span>
+                <span>Your URLs</span>
               </h2>
               <div className="text-xs lg:text-sm text-gray-600 bg-white px-3 py-1 rounded-full">
                 {urls.length} {urls.length === 1 ? "URL" : "URLs"} total
@@ -430,8 +506,18 @@ export default function AdminDashboard() {
                   href="/shorten"
                   className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl space-x-2"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
                   </svg>
                   <span>Create Your First URL</span>
                 </Link>
@@ -484,10 +570,7 @@ export default function AdminDashboard() {
           transition={{ delay: 0.4 }}
           className="mt-6 lg:mt-8 text-center"
         >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link
               href="/shorten"
               className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 space-x-3"

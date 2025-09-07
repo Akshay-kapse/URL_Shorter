@@ -10,6 +10,7 @@ const HIDDEN_ROUTES_PREFIX = [
   "/forgot-password",
   "/reset-password",
   "/verify-code",
+  "/admin"
 ];
 
 export default function Navbar() {
@@ -22,7 +23,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
+    <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -38,7 +39,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             <Link
               href="/"
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
@@ -55,7 +56,7 @@ export default function Navbar() {
             </Link>
             <Link
               href="/admin"
-              className="text-gray-700 hover:text-blue-600 font-medium relative group"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
             >
               Admin
             </Link>
@@ -64,12 +65,12 @@ export default function Navbar() {
           {/* CTA Buttons */}
           <div className="flex items-center space-x-3">
             <Link href="/shorten" className="hidden sm:block">
-              <button className="bg-gradient-to-r hover:from-blue-700 from-blue-600 to-purple-600 hover:to-purple-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300">
+              <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-5 py-2 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300">
                 Try Now
               </button>
             </Link>
             <Link href="/signup" className="hidden sm:block">
-              <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-2 border border-gray-300 hover:border-gray-400 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300">
+              <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-5 py-2 border border-gray-300 hover:border-gray-400 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300">
                 Logout
               </button>
             </Link>
@@ -78,7 +79,7 @@ export default function Navbar() {
             <div className="md:hidden">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="text-gray-700 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 p-2 rounded-md font-bold text-xl"
+                className="text-gray-700 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 p-2 rounded-md font-bold text-2xl"
               >
                 {isOpen ? "✕" : "☰"}
               </button>
@@ -86,29 +87,45 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden flex flex-col mt-2 space-y-2 px-2 pb-4">
+          <div className="md:hidden flex flex-col mt-3 space-y-2 px-3 pb-4 bg-white rounded-lg shadow-md border border-gray-200">
             <Link
               href="/"
-              className="block text-gray-700 hover:text-blue-600 font-medium px-2 py-1 rounded-md transition-colors duration-200"
+              className="block text-gray-700 hover:text-blue-600 font-medium text-center  py-2 rounded-md transition-colors duration-200"
               onClick={() => setIsOpen(false)}
             >
               Home
             </Link>
             <Link
               href="/shorten"
-              className="block text-gray-700 hover:text-blue-600 font-medium px-2 py-1 rounded-md transition-colors duration-200"
+              className="block text-gray-700 hover:text-blue-600 font-medium text-center py-2 rounded-md transition-colors duration-200"
               onClick={() => setIsOpen(false)}
             >
               Shorten
             </Link>
             <Link
               href="/admin"
-              className="block text-gray-700 hover:text-blue-600 font-medium px-2 py-1 rounded-md transition-colors duration-200"
+              className="block text-gray-700 hover:text-blue-600 font-medium text-center py-2 rounded-md transition-colors duration-200"
               onClick={() => setIsOpen(false)}
             >
               Admin
+            </Link>
+            <Link
+              href="/signup"
+              className="block text-red-600 hover:text-blue-600 font-medium text-center  py-2 rounded-md border border-red-600 hover:border-blue-600 transition-all duration-200"
+              onClick={() => setIsOpen(false)}
+            >
+              Logout
+            </Link>
+            <Link
+              href="/shorten"
+              className="block mt-2"
+              onClick={() => setIsOpen(false)}
+            >
+              <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-5 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                Try Now
+              </button>
             </Link>
           </div>
         )}
