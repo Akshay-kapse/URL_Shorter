@@ -396,7 +396,7 @@ export default function AdminDashboard() {
                 className="bg-gradient-to-r from-red-600 to-blue-600 hover:from-blue-800 hover:to-red-800 text-white px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl"
               >
                 <svg
-                  className="w-5 h-5 sm:hidden" // show icon only on xs screens
+                  className="w-5 h-5 sm:hidden" 
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

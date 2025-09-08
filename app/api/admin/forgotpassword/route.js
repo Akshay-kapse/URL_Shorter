@@ -39,7 +39,6 @@ export async function POST(req) {
     await user.save();
 
     // ✅ Use helper to send email
-    console.log("📧 Sending email to:", cleanEmail, "with code:", resetCode);
     await sendEmail(cleanEmail, resetCode);
 
     return withCors(

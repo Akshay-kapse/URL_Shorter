@@ -1,8 +1,9 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";  // ✅ import footer
+import Footer from "@/components/Footer"; 
 import ToastProvider from "@/components/ToastProvider";
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -62,15 +63,15 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-gray-900 selection:bg-blue-100 selection:text-blue-900`}
       >
-        {/* ✅ Navbar hidden on auth pages */}
         <Navbar />
 
         <main className="min-h-screen">{children}</main>
 
         <ToastProvider />
 
-        {/* ✅ Footer hidden on auth pages */}
         <Footer />
+
+        <Analytics />
       </body>
     </html>
   );
