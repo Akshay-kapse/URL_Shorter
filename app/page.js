@@ -26,7 +26,6 @@ const staggerContainer = {
   },
 };
 
-// Reusable Section Wrapper
 // Reusable Section Wrapper (works on scroll down AND up)
 function AnimatedSection({ children }) {
   const ref = useRef(null);
