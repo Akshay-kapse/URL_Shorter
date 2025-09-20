@@ -1,4 +1,3 @@
-# Use official Node.js LTS image
 FROM node:18
 
 # Set working directory
@@ -13,8 +12,11 @@ RUN npm install
 # Copy all project files
 COPY . .
 
+# Build Next.js project
+RUN npm run build
+
 # Expose the port your app will run on
 EXPOSE 3000
 
-# Start the app
-CMD ["node", "index.js"]
+# Start the Next.js app properly
+CMD ["npm", "start"]
